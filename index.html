@@ -70,6 +70,10 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .card-h{transition:transform .28s cubic-bezier(.4,0,.2,1),border-color .18s}
 .card-h:hover{transform:translateY(-4px)}
 
+#blogCarousel{scroll-padding-inline:5.5rem;scroll-snap-type:x mandatory}
+#blogCarousel article{scroll-snap-align:start;scroll-snap-stop:always;width:min(calc(100vw-4rem),420px)}
+#blogCarousel article h3{overflow-wrap:break-word;word-break:break-word}
+
 /* skill tag */
 .stag{transition:border-color .18s}
 
@@ -608,10 +612,10 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
       <button type="button" onclick="scrollBlog(1)" aria-label="Next blog" class="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-10 inline-flex items-center justify-center w-11 h-11 rounded-full border border-accent bg-accent text-white shadow-lg hover:bg-accent-light transition-colors">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </button>
-      <div id="blogCarousel" class="scroll-smooth overflow-x-auto snap-x snap-mandatory flex gap-6 pb-4 pl-6 pr-6 sm:pl-10 sm:pr-10 md:pl-16 md:pr-16 xl:pl-24 xl:pr-24">
+      <div id="blogCarousel" class="scroll-smooth overflow-x-auto snap-x snap-mandatory flex gap-6 pb-4 pl-4 pr-4 sm:pl-6 sm:pr-6 md:pl-8 md:pr-8 xl:pl-10 xl:pr-10">
 
-      <article class="reveal d1 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 snap-start">
-        <div class="pf w-full h-44">
+      <article class="reveal d1 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-[min(calc(100vw-4rem),420px)] sm:w-[48vw] lg:w-1/3 flex-shrink-0 snap-start">
+        <div class="pf w-full h-36 sm:h-40">
           <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=700&q=80" alt="Why I ditched CSS frameworks" loading="lazy">
         </div>
         <div class="p-6">
@@ -627,8 +631,8 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         </div>
       </article>
 
-      <article class="reveal d2 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 snap-start">
-        <div class="pf w-full h-44">
+      <article class="reveal d2 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-[min(calc(100vw-4rem),420px)] sm:w-[48vw] lg:w-1/3 flex-shrink-0 snap-start">
+        <div class="pf w-full h-36 sm:h-40">
           <img src="https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=700&q=80" alt="Design systems" loading="lazy">
         </div>
         <div class="p-6">
@@ -644,8 +648,8 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         </div>
       </article>
 
-      <article class="reveal d3 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 snap-start">
-        <div class="pf w-full h-44">
+      <article class="reveal d3 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-[min(calc(100vw-4rem),420px)] sm:w-[48vw] lg:w-1/3 flex-shrink-0 snap-start">
+        <div class="pf w-full h-36 sm:h-40">
           <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=700&q=80" alt="Freelance lessons" loading="lazy">
         </div>
         <div class="p-6">
@@ -661,8 +665,8 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         </div>
       </article>
 
-      <article class="reveal d4 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 snap-start">
-        <div class="pf w-full h-44">
+      <article class="reveal d4 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-[min(calc(100vw-4rem),420px)] sm:w-[48vw] lg:w-1/3 flex-shrink-0 snap-start">
+        <div class="pf w-full h-36 sm:h-40">
           <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=700&q=80" alt="Performance optimization" loading="lazy">
         </div>
         <div class="p-6">
@@ -678,8 +682,8 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         </div>
       </article>
 
-      <article class="reveal d5 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 snap-start">
-        <div class="pf w-full h-44">
+      <article class="reveal d5 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-[min(calc(100vw-4rem),420px)] sm:w-[48vw] lg:w-1/3 flex-shrink-0 snap-start">
+        <div class="pf w-full h-36 sm:h-40">
           <img src="https://images.unsplash.com/photo-1522202221261-0aa79c3a307a?w=700&q=80" alt="UX research" loading="lazy">
         </div>
         <div class="p-6">
@@ -695,8 +699,8 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         </div>
       </article>
 
-      <article class="reveal d6 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-full sm:w-1/2 lg:w-1/3 flex-shrink-0 snap-start">
-        <div class="pf w-full h-44">
+      <article class="reveal d6 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-[min(calc(100vw-4rem),420px)] sm:w-[48vw] lg:w-1/3 flex-shrink-0 snap-start">
+        <div class="pf w-full h-36 sm:h-40">
           <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=700&q=80" alt="Remote collaboration" loading="lazy">
         </div>
         <div class="p-6">
@@ -865,6 +869,29 @@ function scrollBlog(direction) {
   carousel.scrollTo({ left: target, behavior: 'smooth' });
 }
 
+function snapBlog() {
+  const carousel = document.getElementById('blogCarousel');
+  if (!carousel) return;
+  const card = carousel.querySelector('.snap-start');
+  if (!card) return;
+  const style = getComputedStyle(carousel);
+  const gap = parseInt(style.gap || style.columnGap || 24, 10) || 24;
+  const step = Math.round(card.offsetWidth + gap);
+  const index = Math.round(carousel.scrollLeft / step);
+  const target = Math.min(Math.max(index, 0), carousel.querySelectorAll('.snap-start').length - 1) * step;
+  carousel.scrollTo({ left: target, behavior: 'smooth' });
+}
+
+function bindBlogSnap() {
+  const carousel = document.getElementById('blogCarousel');
+  if (!carousel) return;
+  let timeoutId;
+  carousel.addEventListener('scroll', () => {
+    window.clearTimeout(timeoutId);
+    timeoutId = window.setTimeout(snapBlog, 120);
+  }, { passive: true });
+}
+
 function initBlogSlider() {
   const carousel = document.getElementById('blogCarousel');
   if (!carousel) return;
@@ -872,6 +899,7 @@ function initBlogSlider() {
   window.blogSliderInterval = setInterval(() => scrollBlog(1), 2000);
 }
 
+bindBlogSnap();
 initBlogSlider();
 </script>
 

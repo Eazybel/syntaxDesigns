@@ -12,24 +12,13 @@
 <meta property="og:url" content="https://eliott.dev">
 <title>Syntax-Designs</title>
 
+<script src="script.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
-
-<script>
-tailwind.config = {
-  darkMode: 'class',
-  theme: {
-    extend: {
-      fontFamily: { display: ['PT Sans','sans-serif'], body: ['DM Sans','sans-serif'] },
-      colors: { accent: '#FF6B2B', 'accent-light': '#FF8F5C' }
-    }
-  }
-}
-</script>
 
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -70,14 +59,25 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .card-h{transition:transform .28s cubic-bezier(.4,0,.2,1),border-color .18s}
 .card-h:hover{transform:translateY(-4px)}
 
-#blogCarousel{scroll-padding-inline:5.5rem;scroll-snap-type:x mandatory}
-#blogCarousel article{scroll-snap-align:start;scroll-snap-stop:always;width:min(calc(100vw-4rem),420px)}
+#blogCarousel{scrollbar-width:auto;scrollbar-color:#FF6B2B transparent;overscroll-behavior-inline:contain}
+#blogCarousel::-webkit-scrollbar{height:6px}
+#blogCarousel::-webkit-scrollbar-track{background:transparent}
+#blogCarousel::-webkit-scrollbar-thumb{background:#FF6B2B;border-radius:99px}
+#blogCarousel article{flex:0 0 min(calc(100vw - 4rem),420px);min-width:0}
+@media (min-width:640px){#blogCarousel article{flex-basis:48vw}}
+@media (min-width:1024px){#blogCarousel article{flex-basis:calc((100% - 48px)/3)}}
 #blogCarousel article h3{overflow-wrap:break-word;word-break:break-word}
 
 /* skill tag */
 .stag{transition:border-color .18s}
 
 [x-cloak]{display:none!important}
+
+/* contact confirmation dialog */
+body.modal-open{overflow:hidden}
+.modal-backdrop{background:rgba(9,9,11,.72);backdrop-filter:blur(8px)}
+.modal-panel{animation:modal-in .24s cubic-bezier(.4,0,.2,1)}
+@keyframes modal-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
 </style>
 </head>
 
@@ -616,7 +616,7 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
       <button type="button" onclick="scrollBlog(1)" aria-label="Next blog" class="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-10 inline-flex items-center justify-center w-11 h-11 rounded-full border border-accent bg-accent text-white shadow-lg hover:bg-accent-light transition-colors">
         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
       </button>
-      <div id="blogCarousel" class="scroll-smooth overflow-x-auto snap-x snap-mandatory flex gap-6 pb-4 pl-4 pr-4 sm:pl-6 sm:pr-6 md:pl-8 md:pr-8 xl:pl-10 xl:pr-10">
+      <div id="blogCarousel" class="scroll-smooth overflow-x-auto flex gap-6 pb-4 pl-4 pr-4 sm:pl-6 sm:pr-6 md:pl-8 md:pr-8 xl:pl-10 xl:pr-10" aria-live="off">
 
       <!-- Post 1: Hoisting in JavaScript -->
       <article class="reveal d1 card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent w-[min(calc(100vw-4rem),420px)] sm:w-[48vw] lg:w-1/3 flex-shrink-0 snap-start">
@@ -750,7 +750,8 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
         </div>
 
         <div class="reveal d2">
-          <form action="#" method="POST" novalidate>
+          <form x-ref="contactForm" @submit.prevent="openConfirmation()" action="https://formspree.io/f/xeajvkne" method="POST" novalidate>
+            <input type="hidden" name="upwork_status" x-model="upworkStatus">
             <div class="flex flex-col gap-4">
               <div class="grid sm:grid-cols-2 gap-4">
                 <div>
@@ -775,7 +776,7 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
                   class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent transition-colors resize-none"></textarea>
               </div>
               <button type="submit" class="shimmer w-full bg-accent text-white font-display font-bold text-sm py-3.5 rounded-xl hover:bg-accent-light transition-colors">
-                Send message →
+                Choose how to connect →
               </button>
             </div>
           </form>
@@ -785,6 +786,53 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
     </div>
   </div>
 </section>
+
+<!-- ═══ CONTACT CONFIRMATION ═══ -->
+<div x-show="confirmationOpen" x-cloak x-transition.opacity class="modal-backdrop fixed inset-0 z-[60] flex items-center justify-center p-5" role="dialog" aria-modal="true" aria-labelledby="confirmation-title" @keydown.escape.window="closeConfirmation()">
+  <div x-show="confirmationOpen" x-transition class="modal-panel relative w-full max-w-lg overflow-hidden rounded-3xl border border-zinc-700 bg-zinc-900 p-7 shadow-2xl shadow-black/30 dark:bg-zinc-800" @click.outside="closeConfirmation()">
+    <button type="button" @click="closeConfirmation()" class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white" aria-label="Close confirmation">
+      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+    </button>
+
+    <template x-if="!submitted">
+      <div>
+        <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/15 text-accent">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 12h8m-4-4v8m8-4a8 8 0 11-16 0 8 8 0 0116 0z"/></svg>
+        </div>
+        <p class="mb-2 text-xs font-medium uppercase tracking-[.2em] text-accent">One last step</p>
+        <h2 id="confirmation-title" class="mb-3 font-display text-3xl font-bold text-white">How would you like to connect?</h2>
+        <p class="mb-7 max-w-md text-sm leading-relaxed text-zinc-400">Your message is ready. Choose the path that works best for your project and I’ll take it from there.</p>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          <button type="button" @click="sendInquiry('upwork')" :disabled="submitting" class="group rounded-2xl border border-accent bg-accent p-5 text-left text-white transition-colors hover:bg-accent-light disabled:cursor-wait disabled:opacity-70">
+            <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15"><i class="fa-solid fa-briefcase" aria-hidden="true"></i></span>
+            <span class="block font-display text-lg font-bold">Hire me instantly on Upwork</span>
+            <span class="mt-1 block text-xs leading-relaxed text-white/75">Choose this if you want to hire me directly through Upwork.</span>
+            <span class="mt-4 inline-flex items-center gap-1.5 text-xs font-bold">Hire me on Upwork <span aria-hidden="true">→</span></span>
+          </button>
+          <button type="button" @click="sendInquiry('meeting')" :disabled="submitting" class="group rounded-2xl border border-zinc-700 bg-zinc-800 p-5 text-left text-white transition-colors hover:border-accent hover:bg-zinc-700 disabled:cursor-wait disabled:opacity-70">
+            <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 text-accent"><i class="fa-regular fa-calendar" aria-hidden="true"></i></span>
+            <span class="block font-display text-lg font-bold">Book a meeting first</span>
+            <span class="mt-1 block text-xs leading-relaxed text-zinc-400">Choose this if you want hiring to happen after we meet.</span>
+            <span class="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-accent">Book meeting, then hire <span aria-hidden="true">→</span></span>
+          </button>
+        </div>
+        <p x-show="submitError" x-text="submitError" class="mt-5 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200" role="alert"></p>
+      </div>
+    </template>
+
+    <template x-if="submitted">
+      <div class="py-6 text-center">
+        <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white">
+          <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h2 class="mb-3 font-display text-3xl font-bold text-white">Request sent</h2>
+        <p class="mx-auto mb-7 max-w-sm text-sm leading-relaxed text-zinc-400">Thanks for reaching out. I’ve received your meeting request, and we can finalize the hiring after we meet.</p>
+        <button type="button" @click="closeConfirmation()" class="rounded-xl bg-accent px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-accent-light">Back to portfolio</button>
+      </div>
+    </template>
+  </div>
+</div>
 
 </main>
 
@@ -798,102 +846,6 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
     </p>
   </div>
 </footer>
-
-<script>
-function app() {
-  return {
-    dark: false,
-    mm: false,
-    sc: false,
-    s: 'hero',
-
-    init() {
-      // dark mode
-      this.dark = localStorage.getItem('theme') === 'dark' ||
-        (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-      this.$watch('dark', v => localStorage.setItem('theme', v ? 'dark' : 'light'));
-
-      // scroll
-      window.addEventListener('scroll', () => {
-        this.sc = window.scrollY > 20;
-        this.updateSection();
-      }, { passive: true });
-
-      // reveal
-      const io = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-      document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-
-      // year
-      document.getElementById('yr').textContent = new Date().getFullYear();
-    },
-
-    updateSection() {
-      const atBottom = (window.innerHeight + window.scrollY) >= document.body.scrollHeight - 60;
-      if (atBottom) { this.s = 'contact'; return; }
-      const ids = ['contact','blog','reviews','about','work','services','hero'];
-      for (const id of ids) {
-        const el = document.getElementById(id);
-        if (el && window.scrollY >= el.offsetTop - 130) { this.s = id; return; }
-      }
-    }
-  }
-}
-
-function scrollBlog(direction) {
-  const carousel = document.getElementById('blogCarousel');
-  if (!carousel) return;
-  const card = carousel.querySelector('.snap-start');
-  if (!card) return;
-  const cardWidth = card.offsetWidth;
-  const style = getComputedStyle(carousel);
-  const gap = parseInt(style.gap || style.columnGap || 24, 10) || 24;
-  const visibleWidth = carousel.clientWidth;
-  const step = Math.round(cardWidth + gap); // move one card per step
-  const maxScroll = carousel.scrollWidth - visibleWidth;
-  let target = carousel.scrollLeft + direction * step;
-  if (target < 0) {
-    target = maxScroll;
-  } else if (target > maxScroll) {
-    target = 0;
-  }
-  carousel.scrollTo({ left: target, behavior: 'smooth' });
-}
-
-function snapBlog() {
-  const carousel = document.getElementById('blogCarousel');
-  if (!carousel) return;
-  const card = carousel.querySelector('.snap-start');
-  if (!card) return;
-  const style = getComputedStyle(carousel);
-  const gap = parseInt(style.gap || style.columnGap || 24, 10) || 24;
-  const step = Math.round(card.offsetWidth + gap);
-  const index = Math.round(carousel.scrollLeft / step);
-  const target = Math.min(Math.max(index, 0), carousel.querySelectorAll('.snap-start').length - 1) * step;
-  carousel.scrollTo({ left: target, behavior: 'smooth' });
-}
-
-function bindBlogSnap() {
-  const carousel = document.getElementById('blogCarousel');
-  if (!carousel) return;
-  let timeoutId;
-  carousel.addEventListener('scroll', () => {
-    window.clearTimeout(timeoutId);
-    timeoutId = window.setTimeout(snapBlog, 120);
-  }, { passive: true });
-}
-
-function initBlogSlider() {
-  const carousel = document.getElementById('blogCarousel');
-  if (!carousel) return;
-  if (window.blogSliderInterval) clearInterval(window.blogSliderInterval);
-  window.blogSliderInterval = setInterval(() => scrollBlog(1), 2000);
-}
-
-bindBlogSnap();
-initBlogSlider();
-</script>
 
 </body>
 </html>

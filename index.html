@@ -12,8 +12,8 @@
 <meta property="og:url" content="https://eliott.dev">
 <title>Syntax-Designs</title>
 
-<script src="script.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="script.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,7 +59,7 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .card-h{transition:transform .28s cubic-bezier(.4,0,.2,1),border-color .18s}
 .card-h:hover{transform:translateY(-4px)}
 
-#blogCarousel{scrollbar-width:auto;scrollbar-color:#FF6B2B transparent;overscroll-behavior-inline:contain}
+#blogCarousel{scrollbar-width:auto;scrollbar-color:#FF6B2B transparent;overscroll-behavior-inline:contain;touch-action:pan-x;-webkit-overflow-scrolling:touch}
 #blogCarousel::-webkit-scrollbar{height:6px}
 #blogCarousel::-webkit-scrollbar-track{background:transparent}
 #blogCarousel::-webkit-scrollbar-thumb{background:#FF6B2B;border-radius:99px}
@@ -77,11 +77,13 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 body.modal-open{overflow:hidden}
 .modal-backdrop{background:rgba(9,9,11,.72);backdrop-filter:blur(8px)}
 .modal-panel{animation:modal-in .24s cubic-bezier(.4,0,.2,1)}
+.page-border{position:fixed;inset:0;z-index:55;pointer-events:none;border:4px solid transparent;border-image:linear-gradient(135deg,#FF6B2B 0%,#FFB36B 35%,#facc15 58%,#FF6B2B 100%) 1;filter:drop-shadow(0 0 8px rgba(255,107,43,.3))}
 @keyframes modal-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
 </style>
 </head>
 
 <body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased">
+<div class="page-border" aria-hidden="true"></div>
 
 <!-- ═══ NAV ═══ -->
 <header class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
@@ -808,13 +810,13 @@ body.modal-open{overflow:hidden}
             <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15"><i class="fa-solid fa-briefcase" aria-hidden="true"></i></span>
             <span class="block font-display text-lg font-bold">Hire me instantly on Upwork</span>
             <span class="mt-1 block text-xs leading-relaxed text-white/75">Choose this if you want to hire me directly through Upwork.</span>
-            <span class="mt-4 inline-flex items-center gap-1.5 text-xs font-bold">Hire me on Upwork <span aria-hidden="true">→</span></span>
+            <span class="mt-4 inline-flex items-center gap-2 text-xs font-bold"><span x-show="submitting" class="h-3 w-3 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true"></span><span x-text="submitting ? 'Sending...' : 'Hire me on Upwork'"></span><span x-show="!submitting" aria-hidden="true">→</span></span>
           </button>
           <button type="button" @click="sendInquiry('meeting')" :disabled="submitting" class="group rounded-2xl border border-zinc-700 bg-zinc-800 p-5 text-left text-white transition-colors hover:border-accent hover:bg-zinc-700 disabled:cursor-wait disabled:opacity-70">
             <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 text-accent"><i class="fa-regular fa-calendar" aria-hidden="true"></i></span>
             <span class="block font-display text-lg font-bold">Book a meeting first</span>
             <span class="mt-1 block text-xs leading-relaxed text-zinc-400">Choose this if you want hiring to happen after we meet.</span>
-            <span class="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-accent">Book meeting, then hire <span aria-hidden="true">→</span></span>
+            <span class="mt-4 inline-flex items-center gap-2 text-xs font-bold text-accent"><span x-show="submitting" class="h-3 w-3 animate-spin rounded-full border-2 border-accent/30 border-t-accent" aria-hidden="true"></span><span x-text="submitting ? 'Sending...' : 'Book meeting, then hire'"></span><span x-show="!submitting" aria-hidden="true">→</span></span>
           </button>
         </div>
         <p x-show="submitError" x-text="submitError" class="mt-5 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3 text-sm text-red-200" role="alert"></p>

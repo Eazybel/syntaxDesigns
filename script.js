@@ -1,4 +1,5 @@
-tailwind.config = {
+window.tailwind = window.tailwind || {};
+window.tailwind.config = {
   darkMode: 'class',
   theme: {
     extend: {
@@ -60,7 +61,7 @@ function app() {
     async sendInquiry(route) {
       this.submitting = true;
       this.submitError = '';
-      this.upworkStatus = route === 'upwork' ? 'Upwork verified' : 'Upwork not verified';
+      this.upworkStatus = route === 'upwork' ? 'Upwork verified' : 'upwork-status_';
 
       try {
         const response = await fetch(this.$refs.contactForm.action, {
@@ -158,6 +159,24 @@ function initBlogSlider() {
   carousel.addEventListener('mouseleave', () => { slider.paused = false; slider.pausedUntil = Date.now() + 1000; });
   carousel.addEventListener('focusin', () => { slider.paused = true; });
   carousel.addEventListener('focusout', () => { slider.paused = false; slider.pausedUntil = Date.now() + 1000; });
+  carousel.addEventListener('touchstart', () => {
+    slider.animating = false;
+    slider.paused = true;
+  }, { passive: true });
+  carousel.addEventListener('touchend', () => {
+    window.setTimeout(() => {
+      slider.index = Math.round(carousel.scrollLeft / slider.step());
+      if (slider.index >= slider.total * 2) {
+        slider.index -= slider.total;
+        carousel.scrollTo({ left: Math.round(slider.index * slider.step()), behavior: 'auto' });
+      } else if (slider.index < slider.total) {
+        slider.index += slider.total;
+        carousel.scrollTo({ left: Math.round(slider.index * slider.step()), behavior: 'auto' });
+      }
+      slider.paused = false;
+      slider.pausedUntil = Date.now() + 1500;
+    }, 150);
+  }, { passive: true });
   window.addEventListener('resize', () => { carousel.scrollLeft = Math.round(slider.index * slider.step()); });
   slider.schedule();
 }

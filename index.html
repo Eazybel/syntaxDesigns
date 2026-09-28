@@ -3,22 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Syntax Designs — Freelance End to End Developer and Frontend Developer. Fast, clean and accessible digital products.">
-<meta name="keywords" content="freelance developer, UI designer, portfolio, Tailwind CSS, Alpine.js">
-<meta name="author" content="Syntax Designs">
-<meta property="og:title" content="Syntax End to End  — Freelance Developer">
-<meta property="og:description" content="I design and build digital products that people love to use.">
+<meta name="description" content="Ezedin K. Yassin — full-stack developer building fast, practical digital products with Next.js, TypeScript, React and Node.js.">
+<meta name="keywords" content="Ezedin Yassin, full-stack developer, Next.js developer, TypeScript developer, React developer, Node.js, Syntax Designs">
+<meta name="author" content="Ezedin K. Yassin">
+<meta property="og:title" content="Ezedin K. Yassin — Full-Stack Developer">
+<meta property="og:description" content="I build fast, reliable digital products and practical business systems with modern web technology.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://syntax.pro.et">
-<title>Syntax-Designs</title>
+<title>Ezedin K. Yassin — Full-Stack Developer | Syntax-Designs</title>
 
+<script>
+window.tailwind = {
+  config: {
+    darkMode: 'class',
+    theme: { extend: {
+      fontFamily: { display: ['PT Sans','sans-serif'], body: ['DM Sans','sans-serif'] },
+      colors: { accent: '#FF6B2B', 'accent-light': '#FF8F5C' }
+    }}
+  }
+};
+</script>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="script.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-<link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script defer src="script.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <style>
 *,*::before,*::after{box-sizing:border-box}
@@ -28,17 +38,13 @@ body{transition:background-color .3s,color .3s;overflow-x:hidden}
 img{max-width:100%;height:auto}
 button,a{touch-action:manipulation}
 
-/* noise overlay */
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
-background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E")}
-
 /* scrollbar */
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:#FF6B2B;border-radius:99px}
 
 /* reveal on scroll */
-.reveal{opacity:0;transform:translateY(26px);transition:opacity .6s cubic-bezier(.4,0,.2,1),transform .6s cubic-bezier(.4,0,.2,1)}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .45s ease,transform .45s ease}
 .reveal.in{opacity:1;transform:none}
 .d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
 
@@ -58,7 +64,7 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .pf img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* card hover */
-.card-h{transition:transform .28s cubic-bezier(.4,0,.2,1),border-color .18s}
+.card-h{transition:transform .2s ease,border-color .18s}
 .card-h:hover{transform:translateY(-4px)}
 
 #blogCarousel{
@@ -90,12 +96,18 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .stag{transition:border-color .18s}
 
 [x-cloak]{display:none!important}
+/* performance + accessibility */
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}.reveal{opacity:1;transform:none;transition:none}.shimmer::after,.card-h,.nl::after{transition:none}}
+.mobile-cta{padding-bottom:env(safe-area-inset-bottom)}
+@media (min-width:768px){.mobile-cta{display:none!important}}
+
 
 /* contact confirmation dialog */
 body.modal-open{overflow:hidden}
-.modal-backdrop{background:rgba(9,9,11,.72);backdrop-filter:blur(8px)}
+.modal-backdrop{background:rgba(9,9,11,.88)}
 .modal-panel{animation:modal-in .24s cubic-bezier(.4,0,.2,1)}
-.page-border{position:fixed;inset:0;z-index:55;pointer-events:none;border:4px solid transparent;border-image:linear-gradient(135deg,#FF6B2B 0%,#FFB36B 35%,#facc15 58%,#FF6B2B 100%) 1;filter:drop-shadow(0 0 8px rgba(255,107,43,.3))}
+@media (max-width:767px){.page-border{display:none}}
+.page-border{position:fixed;inset:0;z-index:55;pointer-events:none;border:3px solid transparent;border-image:linear-gradient(135deg,#FF6B2B,#FFB36B,#FF6B2B) 1}
 @keyframes modal-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
 </style>
 </head>
@@ -115,8 +127,9 @@ body.modal-open{overflow:hidden}
     <ul class="hidden md:flex items-center gap-8 text-sm" role="list">
       <li><a href="#services" class="nl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" :class="s==='services'?'on !text-zinc-900 dark:!text-white':''">Services</a></li>
       <li><a href="#work"     class="nl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" :class="s==='work'?'on !text-zinc-900 dark:!text-white':''">Work</a></li>
+      <li><a href="#process" class="nl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" :class="s==='process'?'on !text-zinc-900 dark:!text-white':''">Process</a></li>
       <li><a href="#about"   class="nl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" :class="s==='about'?'on !text-zinc-900 dark:!text-white':''">About</a></li>
-      <li><a href="#reviews" class="nl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" :class="s==='reviews'?'on !text-zinc-900 dark:!text-white':''">Reviews</a></li>
+      <li><a href="#stack" class="nl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" :class="s==='stack'?'on !text-zinc-900 dark:!text-white':''">Stack</a></li>
       <li><a href="#blog"    class="nl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" :class="s==='blog'?'on !text-zinc-900 dark:!text-white':''">Blog</a></li>
       <li><a href="#contact" class="nl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" :class="s==='contact'?'on !text-zinc-900 dark:!text-white':''">Contact</a></li>
     </ul>
@@ -148,7 +161,8 @@ body.modal-open{overflow:hidden}
       <li><a href="#services" @click="mm=false" class="block text-zinc-700 dark:text-zinc-300 hover:text-accent transition-colors">Services</a></li>
       <li><a href="#work"     @click="mm=false" class="block text-zinc-700 dark:text-zinc-300 hover:text-accent transition-colors">Work</a></li>
       <li><a href="#about"   @click="mm=false" class="block text-zinc-700 dark:text-zinc-300 hover:text-accent transition-colors">About</a></li>
-      <li><a href="#reviews" @click="mm=false" class="block text-zinc-700 dark:text-zinc-300 hover:text-accent transition-colors">Reviews</a></li>
+      <li><a href="#process" @click="mm=false" class="block text-zinc-700 dark:text-zinc-300 hover:text-accent transition-colors">Process</a></li>
+      <li><a href="#stack" @click="mm=false" class="block text-zinc-700 dark:text-zinc-300 hover:text-accent transition-colors">Stack</a></li>
       <li><a href="#blog"    @click="mm=false" class="block text-zinc-700 dark:text-zinc-300 hover:text-accent transition-colors">Blog</a></li>
       <li><a href="#contact" @click="mm=false" class="block text-zinc-700 dark:text-zinc-300 hover:text-accent transition-colors">Contact</a></li>
       <li class="pt-2 border-t border-zinc-100 dark:border-zinc-900">
@@ -161,7 +175,7 @@ body.modal-open{overflow:hidden}
 <main>
 
 <!-- ═══ HERO ═══ -->
-<section id="hero" class="relative min-h-screen flex items-center pt-16 overflow-hidden">
+<section id="hero" class="relative min-h-[92vh] flex items-center pt-16 overflow-hidden">
   <div class="absolute top-1/4 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
   <div class="absolute bottom-1/4 left-0 w-64 h-64 bg-zinc-200/50 dark:bg-zinc-800/30 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
 
@@ -172,8 +186,11 @@ body.modal-open{overflow:hidden}
         <h1 class="reveal d1 font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-zinc-900 dark:text-white mb-6">
           Hi, I'm <span class="text-accent">Ezedin</span>
         </h1>
-        <p class="reveal d2 text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-md mb-10">
-          Founder of <strong class="font-medium text-zinc-700 dark:text-zinc-300">Syntax-Designs &amp; Tech Solutions</strong>. Specialized in Building Seamless Digital Experiences with Taste
+        <div class="reveal d2 inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 px-3 py-1.5 mb-5 text-xs font-medium text-zinc-600 dark:text-zinc-300">
+          <span class="relative flex h-2 w-2"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/60"></span><span class="relative inline-flex h-2 w-2 rounded-full bg-accent"></span></span> Available for selected projects
+        </div>
+        <p class="reveal d2 text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-xl mb-10">
+          I build fast, practical digital products and business systems with <strong class="font-medium text-zinc-700 dark:text-zinc-300">Next.js, TypeScript, React and Node.js.</strong> Founder of Syntax-Designs.
         </p>
         <div class="reveal d3 flex flex-wrap gap-4">
           <a href="#work" class="shimmer inline-flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-medium px-7 py-3.5 rounded-full hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors text-sm">
@@ -193,13 +210,23 @@ body.modal-open{overflow:hidden}
       <div class="reveal d2 flex justify-center md:justify-end">
         <div class="relative w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96">
           <div class="pf w-full h-full rounded-3xl">
-            <img src="https://i.ibb.co/Ps6CBNQy/Chat-GPT-Image-Aug-1-2026-08-47-50-PM.avif" alt="Chat GPT Image Aug 1 2026 08 47 50 PM" border="0">
+            <img src="https://i.ibb.co/Ps6CBNQy/Chat-GPT-Image-Aug-1-2026-08-47-50-PM.avif" alt="Ezedin K. Yassin, full-stack developer" width="768" height="768" fetchpriority="high" decoding="async">
           </div>
           <div class="absolute -bottom-4 -left-4 bg-accent text-white font-display font-bold text-sm px-4 py-2.5 rounded-2xl shadow-lg">Open to projects</div>
         </div>
       </div>
 
     </div>
+  </div>
+</section>
+
+<!-- ═══ TRUST STRIP ═══ -->
+<section class="border-y border-zinc-100 dark:border-zinc-900 bg-zinc-50/70 dark:bg-zinc-900/30">
+  <div class="max-w-6xl mx-auto px-6 py-7 grid grid-cols-2 md:grid-cols-4 gap-5 text-center md:text-left">
+    <div><p class="text-xs uppercase tracking-widest text-zinc-400 mb-1">Focus</p><p class="font-medium text-sm">Product-minded engineering</p></div>
+    <div><p class="text-xs uppercase tracking-widest text-zinc-400 mb-1">Frontend</p><p class="font-medium text-sm">Next.js · TypeScript · React</p></div>
+    <div><p class="text-xs uppercase tracking-widest text-zinc-400 mb-1">Backend</p><p class="font-medium text-sm">Node.js · APIs · Databases</p></div>
+    <div><p class="text-xs uppercase tracking-widest text-zinc-400 mb-1">Working style</p><p class="font-medium text-sm">Clear communication · ownership</p></div>
   </div>
 </section>
 
@@ -214,7 +241,7 @@ body.modal-open{overflow:hidden}
 
       <article class="reveal d1 card-h group rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-8 hover:border-accent h-full">
         <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-800 text-accent">
-          <i class="fa-solid fa-code"></i>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"/></svg>
         </div>
         <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">Fullstack Web Development</h3>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Build complete web applications with modern frontend, backend, database, and deployment workflows for reliable launch-ready products.</p>
@@ -222,7 +249,7 @@ body.modal-open{overflow:hidden}
 
       <article class="reveal d2 card-h group rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-8 hover:border-accent h-full">
         <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-800 text-accent">
-          <i class="fa-brands fa-telegram-plane"></i>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 3L3 10.2l7 2.5L12.5 20 21 3zM10 12.7l5.5-5.2"/></svg>
         </div>
         <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">Telegram Bot Development</h3>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Design and deploy Telegram bots for automation, chat flows, notifications, and business workflows using bot APIs and webhooks.</p>
@@ -230,7 +257,7 @@ body.modal-open{overflow:hidden}
 
       <article class="reveal d3 card-h group rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-8 hover:border-accent h-full">
         <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-800 text-accent">
-          <i class="fa-solid fa-comments"></i>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 15a4 4 0 01-4 4H9l-5 3v-7a4 4 0 01-1-3V8a4 4 0 014-4h9a4 4 0 014 4v7z"/></svg>
         </div>
         <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">Chatbot Development</h3>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Build conversational chatbots for support, lead generation, and user engagement with natural flows and intelligent responses.</p>
@@ -238,7 +265,7 @@ body.modal-open{overflow:hidden}
 
       <article class="reveal d4 card-h group rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-8 hover:border-accent h-full">
         <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-800 text-accent">
-          <i class="fa-solid fa-lightbulb"></i>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 18h6M10 22h4M8 14.5A6 6 0 1116 14c-.8.8-1.2 1.5-1.5 3h-5c-.3-1.5-.7-2.2-1.5-3z"/></svg>
         </div>
         <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">Digital Consultancy</h3>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Strategic guidance for digital products, growth planning, user experience, and technical implementation to help your business move faster.</p>
@@ -246,7 +273,7 @@ body.modal-open{overflow:hidden}
 
       <article class="reveal d5 card-h group rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-8 hover:border-accent h-full">
         <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-800 text-accent">
-          <i class="fa-solid fa-tools"></i>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14.7 6.3a4 4 0 01-5.6 5.6L4 17l3 3 5.1-5.1a4 4 0 005.6-5.6l-2 2-2.1-2.1 2.1-2.9z"/></svg>
         </div>
         <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">Website Maintenance</h3>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Ongoing website support, updates, security checks, backups, and performance tuning to keep your site stable and fast.</p>
@@ -254,12 +281,29 @@ body.modal-open{overflow:hidden}
 
       <article class="reveal d6 card-h group rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-8 hover:border-accent h-full">
         <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-800 text-accent">
-          <i class="fa-solid fa-video"></i>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>
         </div>
         <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">CCTV Installation & Control System</h3>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Install, configure, and manage CCTV systems with remote monitoring and control for secure sites and property protection.</p>
       </article>
 
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROCESS ═══ -->
+<section id="process" class="py-24">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="max-w-2xl mb-14">
+      <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">How I work</p>
+      <h2 class="reveal d1 font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Simple process. Serious execution.</h2>
+      <p class="reveal d2 mt-5 text-zinc-500 dark:text-zinc-400 leading-relaxed">I keep projects structured without making them bureaucratic. Every stage has a clear outcome, so you know what is happening and what comes next.</p>
+    </div>
+    <div class="grid md:grid-cols-4 gap-4">
+      <article class="reveal d1 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-950"><span class="text-xs font-bold text-accent">01</span><h3 class="font-display text-xl font-bold mt-5 mb-2">Understand</h3><p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Clarify the problem, users, goals, constraints and the definition of done.</p></article>
+      <article class="reveal d2 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-950"><span class="text-xs font-bold text-accent">02</span><h3 class="font-display text-xl font-bold mt-5 mb-2">Plan</h3><p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Choose the right architecture, stack and milestones before expensive work begins.</p></article>
+      <article class="reveal d3 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-950"><span class="text-xs font-bold text-accent">03</span><h3 class="font-display text-xl font-bold mt-5 mb-2">Build</h3><p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Ship responsive interfaces, reliable APIs and production-ready integrations.</p></article>
+      <article class="reveal d4 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-6 bg-white dark:bg-zinc-950"><span class="text-xs font-bold text-accent">04</span><h3 class="font-display text-xl font-bold mt-5 mb-2">Refine</h3><p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Test, measure, optimize performance and polish the details before handoff.</p></article>
     </div>
   </div>
 </section>
@@ -271,6 +315,7 @@ body.modal-open{overflow:hidden}
       <div>
         <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Portfolio</p>
         <h2 class="reveal d1 font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Selected work</h2>
+        <p class="reveal d2 mt-4 max-w-xl text-sm md:text-base text-zinc-500 dark:text-zinc-400">A few projects that show how I think about product UX, frontend quality, backend structure and real-world delivery.</p>
       </div>
 
     </div>
@@ -497,6 +542,25 @@ body.modal-open{overflow:hidden}
   </div>
 </section>
 
+<!-- ═══ STACK + CURRENT ═══ -->
+<section id="stack" class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
+  <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-[1.15fr_.85fr] gap-10 items-start">
+    <div>
+      <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Technology</p>
+      <h2 class="reveal d1 font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Tools I use to turn ideas into products.</h2>
+      <div class="reveal d2 flex flex-wrap gap-2.5 mt-8">
+        <span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">Next.js</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">TypeScript</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">React</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">Node.js</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">Express</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">PostgreSQL</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">Firebase</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">AWS</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">Tailwind CSS</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">REST APIs</span><span class="stag rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-4 py-2 text-sm">Git</span>
+      </div>
+    </div>
+    <aside class="reveal d2 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-7">
+      <p class="text-xs font-medium text-accent tracking-widest uppercase mb-3">Currently</p>
+      <h3 class="font-display text-2xl font-bold mb-4">Building deeper with Next.js + TypeScript.</h3>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">My current focus is becoming stronger at production-grade Next.js applications, TypeScript, API design, performance and clean product architecture.</p>
+      <div class="mt-6 pt-5 border-t border-zinc-100 dark:border-zinc-900 flex items-center justify-between text-xs text-zinc-500"><span>Open to freelance work</span><span class="inline-flex items-center gap-1.5 text-accent"><span class="h-2 w-2 rounded-full bg-accent"></span>Available</span></div>
+    </aside>
+  </div>
+</section>
+
 <!-- ═══ TESTIMONIALS ═══ -->
 <section id="reviews" class="py-24">
   <div class="max-w-6xl mx-auto px-6">
@@ -624,8 +688,8 @@ body.modal-open{overflow:hidden}
   <div class="max-w-6xl mx-auto px-6">
     <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
       <div>
-        <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Educational blog</p>
-        <h2 class="reveal d1 font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">My Educational blog posts</h2>
+        <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Notes &amp; insights</p>
+        <h2 class="reveal d1 font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">What I’m learning and sharing</h2>
       </div>
     </div>
 
@@ -745,10 +809,10 @@ body.modal-open{overflow:hidden}
         <div>
           <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Get in touch</p>
           <h2 class="reveal d1 font-display font-bold text-4xl md:text-5xl text-white leading-tight mb-5">Let's work<br>together</h2>
-          <p class="reveal d2 text-zinc-400 leading-relaxed mb-8">Available for full-stack MERN development, workflow automation, and frontend missions—short or long-term. Whether you need a high-converting landing page, a full product architecture redesign, or a seasoned developer's second pair of eyes on complex backend and deployment logic, let's talk.</p>
+          <p class="reveal d2 text-zinc-400 leading-relaxed mb-8">Have a product, website or automation problem to solve? Tell me what you are building, what is not working, and what success looks like. I’ll help turn that into a clear technical plan and a practical next step.</p>
 
           <div class="reveal d3 flex flex-col gap-4">
-            <a href="mailto:hello@eliott.dev" class="group flex items-center gap-3 text-zinc-400 hover:text-white transition-colors">
+            <a href="mailto:syntaxsolutions@gmail.com" class="group flex items-center gap-3 text-zinc-400 hover:text-white transition-colors">
               <span class="w-9 h-9 flex items-center justify-center bg-zinc-800 rounded-lg group-hover:bg-accent/20 transition-colors shrink-0">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
               </span>
@@ -825,13 +889,13 @@ body.modal-open{overflow:hidden}
 
         <div class="grid gap-3 sm:grid-cols-2">
           <button type="button" @click="sendInquiry('upwork')" :disabled="submitting" class="group rounded-2xl border border-accent bg-accent p-5 text-left text-white transition-colors hover:bg-accent-light disabled:cursor-wait disabled:opacity-70">
-            <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15"><i class="fa-solid fa-briefcase" aria-hidden="true"></i></span>
+            <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/15"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2M3 12h18M10 12v2h4v-2"/></svg></span>
             <span class="block font-display text-lg font-bold">Hire me instantly on Upwork</span>
             <span class="mt-1 block text-xs leading-relaxed text-white/75">Choose this if you want to hire me directly through Upwork.</span>
             <span class="mt-4 inline-flex items-center gap-2 text-xs font-bold"><span x-show="submitting" class="h-3 w-3 animate-spin rounded-full border-2 border-white/40 border-t-white" aria-hidden="true"></span><span x-text="submitting ? 'Sending...' : 'Hire me on Upwork'"></span><span x-show="!submitting" aria-hidden="true">→</span></span>
           </button>
           <button type="button" @click="sendInquiry('meeting')" :disabled="submitting" class="group rounded-2xl border border-zinc-700 bg-zinc-800 p-5 text-left text-white transition-colors hover:border-accent hover:bg-zinc-700 disabled:cursor-wait disabled:opacity-70">
-            <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 text-accent"><i class="fa-regular fa-calendar" aria-hidden="true"></i></span>
+            <span class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/15 text-accent"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg></span>
             <span class="block font-display text-lg font-bold">Book a meeting first</span>
             <span class="mt-1 block text-xs leading-relaxed text-zinc-400">Choose this if you want hiring to happen after we meet.</span>
             <span class="mt-4 inline-flex items-center gap-2 text-xs font-bold text-accent"><span x-show="submitting" class="h-3 w-3 animate-spin rounded-full border-2 border-accent/30 border-t-accent" aria-hidden="true"></span><span x-text="submitting ? 'Sending...' : 'Book meeting, then hire'"></span><span x-show="!submitting" aria-hidden="true">→</span></span>
@@ -854,11 +918,15 @@ body.modal-open{overflow:hidden}
   </div>
 </div>
 
+<div class="mobile-cta fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-zinc-950/95 border-t border-zinc-200 dark:border-zinc-800 px-4 pt-3 pb-3 shadow-2xl">
+  <a href="#contact" class="w-full inline-flex items-center justify-center gap-2 bg-accent text-white font-bold text-sm py-3 rounded-xl">Start a project <span aria-hidden="true">→</span></a>
+</div>
+
 </main>
 
 <footer class="border-t border-zinc-100 dark:border-zinc-900">
   <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-    <p class="text-sm text-zinc-400">© <span id="yr"></span> Eliott. All rights reserved. <br> Developed by <a rel="noopener" rel="" href="https://syntax.pro.et" target="_blank" class="font-bold">Ezedin Yassin</a> 
+    <p class="text-sm text-zinc-400">© <span id="yr"></span> Ezedin K. Yassin. All rights reserved. <br> Developed by <a rel="noopener noreferrer" href="https://syntax.pro.et" target="_blank" class="font-bold">Ezedin Yassin</a> 
     <p class="text-xs text-zinc-500">Built with
       <a rel="noopener" href="https://tailwindcss.com" rel="noopener noreferrer" target="_blank" class="hover:text-accent transition-colors">Tailwind CSS</a>
       &amp;
@@ -866,6 +934,6 @@ body.modal-open{overflow:hidden}
     </p>
   </div>
 </footer>
-<script src="script.js"></script>
+
 </body>
 </html>

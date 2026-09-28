@@ -1,15 +1,18 @@
+/* =========================================================
+   SYNTAX-DESIGNS PORTFOLIO
+   Main JavaScript
+   ========================================================= */
+
 window.tailwind = window.tailwind || {};
 
 window.tailwind.config = {
   darkMode: 'class',
-
   theme: {
     extend: {
       fontFamily: {
         display: ['PT Sans', 'sans-serif'],
         body: ['DM Sans', 'sans-serif']
       },
-
       colors: {
         accent: '#FF6B2B',
         'accent-light': '#FF8F5C'
@@ -20,7 +23,7 @@ window.tailwind.config = {
 
 
 /* =========================================================
-   MAIN ALPINE APPLICATION
+   MAIN ALPINE APP
    ========================================================= */
 
 function app() {
@@ -36,76 +39,108 @@ function app() {
     submitError: '',
     upworkStatus: '',
 
-
-    /* -------------------------------------------------------
+    /* -----------------------------------------------------
        INITIALIZATION
-    ------------------------------------------------------- */
+       ----------------------------------------------------- */
 
     init() {
+      /* ---------------------------
+         Dark mode
+         --------------------------- */
 
-      /* Dark mode */
+      const savedTheme = localStorage.getItem('theme');
+
       this.dark =
-        localStorage.getItem('theme') === 'dark' ||
+        savedTheme === 'dark' ||
         (
-          !localStorage.getItem('theme') &&
-          window.matchMedia(
-            '(prefers-color-scheme: dark)'
-          ).matches
+          !savedTheme &&
+          window.matchMedia &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches
         );
 
       this.$watch('dark', value => {
-        localStorage.setItem(
-          'theme',
-          value ? 'dark' : 'light'
-        );
+        try {
+          localStorage.setItem(
+            'theme',
+            value ? 'dark' : 'light'
+          );
+        } catch (_) {
+          /* localStorage may be unavailable */
+        }
       });
 
 
-      /* Scroll handling */
+      /* ---------------------------
+         Scroll state
+         Performance optimized
+         --------------------------- */
+
+      let ticking = false;
+
+      const handleScroll = () => {
+        if (ticking) return;
+
+        ticking = true;
+
+        window.requestAnimationFrame(() => {
+          this.sc = window.scrollY > 20;
+          this.updateSection();
+          ticking = false;
+        });
+      };
+
       window.addEventListener(
         'scroll',
-        () => {
-          this.sc = window.scrollY > 20;
-
-          this.updateSection();
-        },
-        {
-          passive: true
-        }
+        handleScroll,
+        { passive: true }
       );
 
 
-      /* Reveal animations */
-      const io = new IntersectionObserver(
-        entries => {
+      /* ---------------------------
+         Reveal animations
+         --------------------------- */
 
-          entries.forEach(entry => {
+      const revealElements =
+        document.querySelectorAll('.reveal');
 
-            if (entry.isIntersecting) {
+      if (
+        'IntersectionObserver' in window &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      ) {
+        const observer = new IntersectionObserver(
+          entries => {
+            entries.forEach(entry => {
+              if (!entry.isIntersecting) return;
 
               entry.target.classList.add('in');
 
-              io.unobserve(entry.target);
-            }
+              observer.unobserve(entry.target);
+            });
+          },
+          {
+            threshold: 0.08,
+            rootMargin: '0px 0px -50px 0px'
+          }
+        );
 
-          });
-
-        },
-        {
-          threshold: 0.1,
-          rootMargin: '0px 0px -40px 0px'
-        }
-      );
-
-
-      document
-        .querySelectorAll('.reveal')
-        .forEach(element => {
-          io.observe(element);
+        revealElements.forEach(element => {
+          observer.observe(element);
         });
+      } else {
+        /*
+         * If the browser doesn't support IntersectionObserver
+         * or the user prefers reduced motion, reveal everything.
+         */
+        revealElements.forEach(element => {
+          element.classList.add('in');
+        });
+      }
 
 
-      /* Current year */
+      /* ---------------------------
+         Current year
+         --------------------------- */
+
       const yearElement =
         document.getElementById('yr');
 
@@ -113,52 +148,51 @@ function app() {
         yearElement.textContent =
           new Date().getFullYear();
       }
+
+
+      /* ---------------------------
+         Initial section detection
+         --------------------------- */
+
+      this.updateSection();
     },
 
 
-    /* -------------------------------------------------------
+    /* =====================================================
        CONTACT CONFIRMATION
-    ------------------------------------------------------- */
+       ===================================================== */
 
     openConfirmation() {
+      if (!this.$refs.contactForm) return;
 
-      if (
-        !this.$refs.contactForm.reportValidity()
-      ) {
+      if (!this.$refs.contactForm.reportValidity()) {
         return;
       }
 
       this.submitError = '';
       this.submitted = false;
-
       this.confirmationOpen = true;
 
-      document.body.classList.add(
-        'modal-open'
-      );
+      document.body.classList.add('modal-open');
     },
 
 
     closeConfirmation() {
-
-      if (this.submitting) {
-        return;
-      }
+      if (this.submitting) return;
 
       this.confirmationOpen = false;
       this.submitted = false;
 
-      document.body.classList.remove(
-        'modal-open'
-      );
+      document.body.classList.remove('modal-open');
     },
 
 
-    /* -------------------------------------------------------
-       CONTACT FORM SUBMISSION
-    ------------------------------------------------------- */
+    /* =====================================================
+       SEND CONTACT INQUIRY
+       ===================================================== */
 
     async sendInquiry(route) {
+      if (!this.$refs.contactForm) return;
 
       this.submitting = true;
       this.submitError = '';
@@ -168,24 +202,19 @@ function app() {
           ? 'Upwork verified'
           : 'upwork-status_';
 
-
       try {
-
         const response = await fetch(
           this.$refs.contactForm.action,
           {
             method: 'POST',
-
             body: new FormData(
               this.$refs.contactForm
             ),
-
             headers: {
               Accept: 'application/json'
             }
           }
         );
-
 
         if (!response.ok) {
           throw new Error(
@@ -193,14 +222,14 @@ function app() {
           );
         }
 
-
         this.$refs.contactForm.reset();
-
         this.upworkStatus = '';
 
+        /* ---------------------------
+           Upwork
+           --------------------------- */
 
         if (route === 'upwork') {
-
           window.location.assign(
             'https://www.upwork.com/freelancers/~01362d3f829f520be8'
           );
@@ -208,6 +237,9 @@ function app() {
           return;
         }
 
+        /* ---------------------------
+           Meeting / normal inquiry
+           --------------------------- */
 
         this.submitted = true;
 
@@ -223,29 +255,22 @@ function app() {
     },
 
 
-    /* -------------------------------------------------------
+    /* =====================================================
        ACTIVE NAVIGATION SECTION
-    ------------------------------------------------------- */
+       ===================================================== */
 
     updateSection() {
+      const bottomReached =
+        window.innerHeight +
+        window.scrollY >=
+        document.body.scrollHeight - 80;
 
-      const atBottom =
-        (
-          window.innerHeight +
-          window.scrollY
-        ) >=
-        document.body.scrollHeight - 60;
-
-
-      if (atBottom) {
-
+      if (bottomReached) {
         this.s = 'contact';
-
         return;
       }
 
-
-      const ids = [
+      const sections = [
         'contact',
         'blog',
         'reviews',
@@ -255,21 +280,17 @@ function app() {
         'hero'
       ];
 
-
-      for (const id of ids) {
-
+      for (const id of sections) {
         const element =
           document.getElementById(id);
 
+        if (!element) continue;
 
-        if (
-          element &&
-          window.scrollY >=
-            element.offsetTop - 130
-        ) {
+        const offset =
+          element.offsetTop - 140;
 
+        if (window.scrollY >= offset) {
           this.s = id;
-
           return;
         }
       }
@@ -279,37 +300,21 @@ function app() {
 
 
 /* =========================================================
-   BLOG SLIDER
+   BLOG CAROUSEL
    ========================================================= */
 
-/*
-   Move the blog slider manually.
-
-   direction:
-   -1 = previous
-    1 = next
-*/
-
 function scrollBlog(direction) {
+  const slider = window.blogSlider;
 
-  const slider =
-    window.blogSlider;
-
-
-  if (
-    !slider ||
-    slider.animating
-  ) {
+  if (!slider || slider.animating) {
     return;
   }
 
-
   /*
-     Give the user some time before
-     automatic scrolling starts again.
-  */
-  slider.pauseFor(3500);
-
+   * Pause autoplay briefly after manual interaction.
+   */
+  slider.pausedUntil =
+    Date.now() + 4500;
 
   slider.move(direction);
 }
@@ -320,126 +325,59 @@ function scrollBlog(direction) {
    ========================================================= */
 
 function initBlogSlider() {
-
   const carousel =
-    document.getElementById(
-      'blogCarousel'
-    );
+    document.getElementById('blogCarousel');
 
-
-  /*
-     If the carousel doesn't exist,
-     simply stop here.
-  */
-  if (!carousel) {
+  if (!carousel || window.blogSlider) {
     return;
   }
 
-
-  /*
-     Prevent duplicate initialization.
-  */
-  if (window.blogSlider) {
-    return;
-  }
-
-
-  /*
-     Get only the original articles.
-  */
   const originals =
     Array.from(
-      carousel.querySelectorAll(
-        ':scope > article'
-      )
+      carousel.querySelectorAll('article')
     );
-
 
   if (!originals.length) {
     return;
   }
 
-
-  const total =
-    originals.length;
+  const total = originals.length;
 
 
   /* -------------------------------------------------------
-     CREATE CLONES
+     Clone cards for infinite scrolling
      ------------------------------------------------------- */
 
-  /*
-     Clone cards before the originals.
-     These are used when moving backwards.
-  */
   const before =
     originals.map(card =>
       card.cloneNode(true)
     );
 
-
-  /*
-     Clone cards after the originals.
-     These are used when moving forwards.
-  */
   const after =
     originals.map(card =>
       card.cloneNode(true)
     );
 
 
-  /*
-     Insert the previous clones
-     in reverse order.
-  */
-  before
-    .reverse()
-    .forEach(card => {
+  before.forEach(card => {
+    card.classList.remove('reveal');
 
-      /*
-         Cloned cards should not participate
-         in the reveal animation.
-      */
-      card.classList.remove(
-        'reveal'
-      );
+    carousel.insertBefore(
+      card,
+      carousel.firstChild
+    );
+  });
 
 
-      card.setAttribute(
-        'aria-hidden',
-        'true'
-      );
-
-
-      carousel.insertBefore(
-        card,
-        carousel.firstChild
-      );
-    });
-
-
-  /*
-     Insert the next clones.
-  */
   after.forEach(card => {
-
-    card.classList.remove(
-      'reveal'
-    );
-
-
-    card.setAttribute(
-      'aria-hidden',
-      'true'
-    );
-
+    card.classList.remove('reveal');
 
     carousel.appendChild(card);
   });
 
 
   /* -------------------------------------------------------
-     SLIDER OBJECT
+     Slider state
      ------------------------------------------------------- */
 
   const slider = {
@@ -448,10 +386,6 @@ function initBlogSlider() {
 
     total,
 
-    /*
-       The first original card starts
-       after all the previous clones.
-    */
     index: total,
 
     animating: false,
@@ -462,311 +396,169 @@ function initBlogSlider() {
 
     timer: null,
 
-    moveTimer: null,
-
-    resizeTimer: null,
-
-
-    /*
-       Time between automatic slides.
-    */
-    interval: 4500,
-
-
-    /*
-       Approximate smooth animation duration.
-    */
-    duration: 650,
+    animationDuration: 760,
 
 
     /* -----------------------------------------------------
-       GET CARDS
-    ----------------------------------------------------- */
+       Calculate one card movement
+       ----------------------------------------------------- */
 
-    cards() {
-
-      return Array.from(
-        this.carousel.querySelectorAll(
-          ':scope > article'
-        )
-      );
-    },
-
-
-    /* -----------------------------------------------------
-       FIND EXACT CARD POSITION
-    ----------------------------------------------------- */
-
-    targetFor(index) {
-
-      const cards =
-        this.cards();
-
-
+    step() {
       const card =
-        cards[index];
-
+        carousel.querySelector('article');
 
       if (!card) {
         return 0;
       }
 
+      const styles =
+        getComputedStyle(carousel);
 
-      const cardRect =
-        card.getBoundingClientRect();
+      const gap =
+        parseFloat(
+          styles.columnGap ||
+          styles.gap
+        ) || 24;
 
-
-      const carouselRect =
-        this.carousel.getBoundingClientRect();
-
-
-      /*
-         Calculate the card's exact position
-         relative to the scrolling container.
-
-         This is much safer than assuming:
-         card width + fixed gap
-      */
-      return Math.max(
-        0,
-
-        Math.round(
-          cardRect.left -
-          carouselRect.left +
-          this.carousel.scrollLeft
-        )
+      return (
+        card.getBoundingClientRect().width +
+        gap
       );
     },
 
 
     /* -----------------------------------------------------
-       FIND CURRENT CARD
-    ----------------------------------------------------- */
-
-    nearestIndex() {
-
-      const cards =
-        this.cards();
-
-
-      if (!cards.length) {
-        return 0;
-      }
-
-
-      const currentScroll =
-        this.carousel.scrollLeft;
-
-
-      let nearest = 0;
-
-      let distance =
-        Infinity;
-
-
-      cards.forEach(
-        (card, index) => {
-
-          const cardRect =
-            card.getBoundingClientRect();
-
-
-          const carouselRect =
-            this.carousel.getBoundingClientRect();
-
-
-          const target =
-            Math.max(
-              0,
-
-              cardRect.left -
-              carouselRect.left +
-              currentScroll
-            );
-
-
-          const delta =
-            Math.abs(
-              target -
-              currentScroll
-            );
-
-
-          if (delta < distance) {
-
-            distance = delta;
-
-            nearest = index;
-          }
-        }
-      );
-
-
-      return nearest;
-    },
-
-
-    /* -----------------------------------------------------
-       INSTANT POSITION
-    ----------------------------------------------------- */
-
-    jumpTo(index) {
-
-      this.index = index;
-
-
-      this.carousel.scrollLeft =
-        this.targetFor(index);
-    },
-
-
-    /* -----------------------------------------------------
-       INFINITE LOOP NORMALIZATION
-    ----------------------------------------------------- */
-
-    normalize() {
-
-      /*
-         If we've moved into the second
-         set of clones, jump back to
-         the corresponding original card.
-      */
-      if (
-        this.index >= total * 2
-      ) {
-
-        this.jumpTo(
-          this.index - total
-        );
-
-        return;
-      }
-
-
-      /*
-         If we've moved backwards into
-         the first clone set, jump forward
-         to the corresponding original.
-      */
-      if (
-        this.index < total
-      ) {
-
-        this.jumpTo(
-          this.index + total
-        );
-      }
-    },
-
-
-    /* -----------------------------------------------------
-       MOVE ONE CARD
-    ----------------------------------------------------- */
+       Move slider
+       ----------------------------------------------------- */
 
     move(direction) {
-
       if (this.animating) {
         return;
       }
 
+      const step =
+        this.step();
+
+      if (!step) {
+        return;
+      }
 
       const nextIndex =
         this.index + direction;
 
+      this.index = nextIndex;
 
-      /*
-         We have three sets:
-         
-         clones + originals + clones
-
-         Never move outside those bounds.
-      */
-      if (
-        nextIndex < 0 ||
-        nextIndex >= total * 3
-      ) {
-        return;
-      }
+      this.animating = true;
 
 
-      this.index =
-        nextIndex;
+      const reducedMotion =
+        window.matchMedia &&
+        window.matchMedia(
+          '(prefers-reduced-motion: reduce)'
+        ).matches;
 
 
-      this.animating =
-        true;
-
-
-      /*
-         Calculate the position dynamically
-         instead of using a fixed card width.
-      */
-      const target =
-        this.targetFor(
-          nextIndex
-        );
-
-
-      this.carousel.scrollTo({
-        left: target,
-        behavior: 'smooth'
+      carousel.scrollTo({
+        left:
+          Math.round(
+            nextIndex * step
+          ),
+        behavior:
+          reducedMotion
+            ? 'auto'
+            : 'smooth'
       });
 
 
-      window.clearTimeout(
-        this.moveTimer
+      window.setTimeout(
+        () => {
+
+          /* ---------------------------------------------
+             Jump from right clones back to original cards
+             --------------------------------------------- */
+
+          if (
+            this.index >=
+            this.total * 2
+          ) {
+            this.index -= this.total;
+
+            carousel.scrollTo({
+              left:
+                Math.round(
+                  this.index *
+                  this.step()
+                ),
+              behavior: 'auto'
+            });
+          }
+
+
+          /* ---------------------------------------------
+             Jump from left clones forward
+             --------------------------------------------- */
+
+          else if (
+            this.index < this.total
+          ) {
+            this.index += this.total;
+
+            carousel.scrollTo({
+              left:
+                Math.round(
+                  this.index *
+                  this.step()
+                ),
+              behavior: 'auto'
+            });
+          }
+
+
+          this.animating = false;
+
+        },
+        this.animationDuration
       );
-
-
-      this.moveTimer =
-        window.setTimeout(
-          () => {
-
-            this.normalize();
-
-            this.animating =
-              false;
-
-          },
-
-          this.duration + 80
-        );
     },
 
 
     /* -----------------------------------------------------
-       PAUSE AUTOPLAY
-    ----------------------------------------------------- */
-
-    pauseFor(ms) {
-
-      this.pausedUntil =
-        Date.now() + ms;
-    },
-
-
-    /* -----------------------------------------------------
-       AUTOPLAY
-    ----------------------------------------------------- */
+       Autoplay
+       ----------------------------------------------------- */
 
     schedule() {
-
       window.clearTimeout(
         this.timer
       );
 
 
+      /*
+       * Standard ~4.5 second autoplay timing.
+       */
       this.timer =
         window.setTimeout(
           () => {
 
+            const pageVisible =
+              document.visibilityState ===
+              'visible';
+
+            const motionAllowed =
+              !(
+                window.matchMedia &&
+                window.matchMedia(
+                  '(prefers-reduced-motion: reduce)'
+                ).matches
+              );
+
+
             if (
               !this.paused &&
+              pageVisible &&
+              motionAllowed &&
               Date.now() >=
-                this.pausedUntil &&
-              !this.animating
+              this.pausedUntil
             ) {
-
               this.move(1);
             }
 
@@ -774,79 +566,34 @@ function initBlogSlider() {
             this.schedule();
 
           },
-
-          this.interval
+          4500
         );
-    },
-
-
-    /* -----------------------------------------------------
-       SYNCHRONIZE AFTER MANUAL SCROLL
-    ----------------------------------------------------- */
-
-    syncAfterInteraction() {
-
-      if (this.animating) {
-        return;
-      }
-
-
-      const nearest =
-        this.nearestIndex();
-
-
-      if (
-        nearest === this.index
-      ) {
-        return;
-      }
-
-
-      this.index =
-        nearest;
-
-
-      /*
-         If the user manually dragged
-         into a clone area, silently move
-         to the matching original.
-      */
-      if (
-        this.index >= total * 2 ||
-        this.index < total
-      ) {
-
-        this.normalize();
-      }
     }
   };
 
 
+  window.blogSlider = slider;
+
+
   /* -------------------------------------------------------
-     EXPOSE SLIDER
+     Set initial position
      ------------------------------------------------------- */
 
-  window.blogSlider =
-    slider;
-
-
-  /*
-     Start at the first ORIGINAL card,
-     not at a clone.
-  */
-  slider.jumpTo(total);
+  carousel.scrollLeft =
+    Math.round(
+      slider.index *
+      slider.step()
+    );
 
 
   /* -------------------------------------------------------
-     MOUSE HOVER
+     Mouse interaction
      ------------------------------------------------------- */
 
   carousel.addEventListener(
     'mouseenter',
     () => {
-
-      slider.paused =
-        true;
+      slider.paused = true;
     }
   );
 
@@ -854,28 +601,22 @@ function initBlogSlider() {
   carousel.addEventListener(
     'mouseleave',
     () => {
+      slider.paused = false;
 
-      slider.paused =
-        false;
-
-
-      slider.pauseFor(
-        1200
-      );
+      slider.pausedUntil =
+        Date.now() + 1200;
     }
   );
 
 
   /* -------------------------------------------------------
-     KEYBOARD FOCUS
+     Keyboard / focus interaction
      ------------------------------------------------------- */
 
   carousel.addEventListener(
     'focusin',
     () => {
-
-      slider.paused =
-        true;
+      slider.paused = true;
     }
   );
 
@@ -883,136 +624,169 @@ function initBlogSlider() {
   carousel.addEventListener(
     'focusout',
     () => {
+      slider.paused = false;
 
-      slider.paused =
-        false;
-
-
-      slider.pauseFor(
-        1200
-      );
+      slider.pausedUntil =
+        Date.now() + 1500;
     }
   );
 
 
   /* -------------------------------------------------------
-     TOUCH / POINTER START
+     Touch interaction
      ------------------------------------------------------- */
 
   carousel.addEventListener(
-    'pointerdown',
+    'touchstart',
     () => {
 
-      slider.animating =
-        false;
+      slider.animating = false;
+      slider.paused = true;
 
-
-      window.clearTimeout(
-        slider.moveTimer
-      );
-
-
-      slider.paused =
-        true;
     },
-    {
-      passive: true
-    }
+    { passive: true }
   );
 
 
-  /* -------------------------------------------------------
-     TOUCH / POINTER END
-     ------------------------------------------------------- */
-
   carousel.addEventListener(
-    'pointerup',
+    'touchend',
     () => {
 
       window.setTimeout(
         () => {
 
-          slider.syncAfterInteraction();
+          const step =
+            slider.step();
+
+          if (!step) {
+            slider.paused = false;
+            return;
+          }
 
 
-          slider.paused =
-            false;
+          slider.index =
+            Math.round(
+              carousel.scrollLeft /
+              step
+            );
 
 
-          slider.pauseFor(
-            1800
-          );
+          /* ---------------------------------------------
+             Keep the slider inside the clone loop
+             --------------------------------------------- */
+
+          if (
+            slider.index >=
+            slider.total * 2
+          ) {
+            slider.index -=
+              slider.total;
+
+            carousel.scrollTo({
+              left:
+                Math.round(
+                  slider.index *
+                  slider.step()
+                ),
+              behavior: 'auto'
+            });
+          }
+
+
+          else if (
+            slider.index <
+            slider.total
+          ) {
+            slider.index +=
+              slider.total;
+
+            carousel.scrollTo({
+              left:
+                Math.round(
+                  slider.index *
+                  slider.step()
+                ),
+              behavior: 'auto'
+            });
+          }
+
+
+          slider.paused = false;
+
+          slider.pausedUntil =
+            Date.now() + 1800;
 
         },
-
-        120
+        150
       );
+
     },
-    {
-      passive: true
-    }
+    { passive: true }
   );
 
 
   /* -------------------------------------------------------
-     SCROLL
+     Resize handling
      ------------------------------------------------------- */
 
-  carousel.addEventListener(
-    'scroll',
-    () => {
-
-      if (!slider.animating) {
-        return;
-      }
-
-
-      slider.pauseFor(
-        1200
-      );
-    },
-    {
-      passive: true
-    }
-  );
-
-
-  /* -------------------------------------------------------
-     RESPONSIVE RESIZE
-     ------------------------------------------------------- */
+  let resizeTimer = null;
 
   window.addEventListener(
     'resize',
     () => {
 
       window.clearTimeout(
-        slider.resizeTimer
+        resizeTimer
       );
 
-
-      slider.resizeTimer =
+      resizeTimer =
         window.setTimeout(
           () => {
 
-            /*
-               Recalculate the position
-               after the responsive card
-               width changes.
-            */
-            slider.jumpTo(
-              slider.index
-            );
+            const step =
+              slider.step();
+
+            if (!step) return;
+
+            carousel.scrollLeft =
+              Math.round(
+                slider.index *
+                step
+              );
 
           },
-
-          100
+          120
         );
+    },
+    { passive: true }
+  );
+
+
+  /* -------------------------------------------------------
+     Pause when browser tab isn't visible
+     ------------------------------------------------------- */
+
+  document.addEventListener(
+    'visibilitychange',
+    () => {
+
+      if (
+        document.visibilityState ===
+        'hidden'
+      ) {
+        slider.paused = true;
+      } else {
+        slider.paused = false;
+
+        slider.pausedUntil =
+          Date.now() + 1500;
+      }
     }
   );
 
 
   /* -------------------------------------------------------
-     START AUTOPLAY
+     Start autoplay
      ------------------------------------------------------- */
 
   slider.schedule();
@@ -1024,8 +798,7 @@ function initBlogSlider() {
    ========================================================= */
 
 if (
-  document.readyState ===
-  'loading'
+  document.readyState === 'loading'
 ) {
 
   document.addEventListener(
@@ -1036,4 +809,5 @@ if (
 } else {
 
   initBlogSlider();
+
 }

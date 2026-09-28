@@ -24,7 +24,9 @@
 *,*::before,*::after{box-sizing:border-box}
 html,body{font-family:'DM Sans',sans-serif}
 h1,h2,h3,h4,h5,h6{font-family:'PT Sans',sans-serif}
-body{transition:background-color .3s,color .3s}
+body{transition:background-color .3s,color .3s;overflow-x:hidden}
+img{max-width:100%;height:auto}
+button,a{touch-action:manipulation}
 
 /* noise overlay */
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.35;
@@ -59,14 +61,30 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .card-h{transition:transform .28s cubic-bezier(.4,0,.2,1),border-color .18s}
 .card-h:hover{transform:translateY(-4px)}
 
-#blogCarousel{scrollbar-width:auto;scrollbar-color:#FF6B2B transparent;overscroll-behavior-inline:contain;touch-action:pan-x;-webkit-overflow-scrolling:touch}
-#blogCarousel::-webkit-scrollbar{height:6px}
-#blogCarousel::-webkit-scrollbar-track{background:transparent}
-#blogCarousel::-webkit-scrollbar-thumb{background:#FF6B2B;border-radius:99px}
-#blogCarousel article{flex:0 0 min(calc(100vw - 4rem),420px);min-width:0}
-@media (min-width:640px){#blogCarousel article{flex-basis:48vw}}
-@media (min-width:1024px){#blogCarousel article{flex-basis:calc((100% - 48px)/3)}}
-#blogCarousel article h3{overflow-wrap:break-word;word-break:break-word}
+#blogCarousel{
+  scrollbar-width:none;
+  overscroll-behavior-x:contain;
+  touch-action:pan-x;
+  -webkit-overflow-scrolling:touch;
+  scroll-behavior:auto;
+  scroll-snap-type:x proximity;
+  scroll-padding-inline:0;
+  overflow-anchor:none;
+}
+#blogCarousel::-webkit-scrollbar{display:none}
+#blogCarousel > article{
+  flex:0 0 min(100%,420px) !important;
+  width:auto !important;
+  min-width:0;
+  scroll-snap-align:start;
+}
+@media (min-width:640px){#blogCarousel > article{flex-basis:min(48vw,420px) !important}}
+@media (min-width:1024px){#blogCarousel > article{flex-basis:calc((100% - 48px)/3) !important}}
+#blogCarousel article h3{overflow-wrap:anywhere;word-break:break-word}
+@media (max-width:639px){
+  #blogCarousel{gap:16px !important}
+  #blogCarousel > article{flex-basis:min(100%,420px) !important}
+}
 
 /* skill tag */
 .stag{transition:border-color .18s}
@@ -164,7 +182,7 @@ body.modal-open{overflow:hidden}
           </a>
           <a href="#contact" class="inline-flex items-center gap-2 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 font-medium px-7 py-3.5 rounded-full hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors text-sm">Get in touch</a>
         </div>
-        <div class="reveal d4 flex gap-8 mt-14 pt-8 border-t border-zinc-100 dark:border-zinc-900">
+        <div class="reveal d4 flex flex-wrap gap-x-6 gap-y-5 mt-14 pt-8 border-t border-zinc-100 dark:border-zinc-900">
           <div><p class="font-display font-bold text-3xl text-zinc-900 dark:text-white">14+</p><p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Projects done</p></div>
           <div><p class="font-display font-bold text-3xl text-zinc-900 dark:text-white">10+</p><p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Happy clients</p></div>
           <div><p class="font-display font-bold text-3xl text-zinc-900 dark:text-white">5y</p><p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Experience</p></div>
@@ -234,7 +252,7 @@ body.modal-open{overflow:hidden}
         <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">Ongoing website support, updates, security checks, backups, and performance tuning to keep your site stable and fast.</p>
       </article>
 
-      <article class="reveal d6 card-h group rounded-2xl overflow-hዝidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-8 hover:border-accent h-full">
+      <article class="reveal d6 card-h group rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 p-8 hover:border-accent h-full">
         <div class="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-zinc-800 text-accent">
           <i class="fa-solid fa-video"></i>
         </div>
@@ -260,7 +278,7 @@ body.modal-open{overflow:hidden}
     <div class="grid gap-6 md:grid-cols-3">
 
       <article class="card-h reveal d1 group rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent h-full">
-        <a rel="noopener" href="https://maxviewfitness.com/" target="_blank" rel="noreferrer" class="group block h-full">
+        <a href="https://maxviewfitness.com/" target="_blank" rel="noopener noreferrer" class="group block h-full">
           <div class="pf w-full h-64">
             <img src="https://res.cloudinary.com/dgietnwua/image/upload/v1787081638/30124fdd-7cfd-43ee-a1ab-b24988343e16.png" alt="Max View Fitness" loading="lazy" class="h-full w-full object-cover" />
           </div>
@@ -280,7 +298,7 @@ body.modal-open{overflow:hidden}
       </article>
 
       <article class="card-h reveal d2 group rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent h-full">
-        <a rel="noopener" href="https://www.maheder.photography/" target="_blank" rel="noreferrer" class="group block h-full">
+        <a href="https://www.maheder.photography/" target="_blank" rel="noopener noreferrer" class="group block h-full">
           <div class="pf w-full h-64">
             <img src="https://res.cloudinary.com/dgietnwua/image/upload/v1787081870/2dc35be0-db92-4aa6-ac72-c618de3ab753.png" alt="Mahider Photography" loading="lazy" class="h-full w-full object-cover" />
           </div>
@@ -299,7 +317,7 @@ body.modal-open{overflow:hidden}
       </article>
 
       <article class="card-h reveal d3 group rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent h-full">
-        <a rel="noopener" href="https://www.nordicmedicalcentre.com/" target="_blank" rel="noreferrer" class="group block h-full">
+        <a href="https://www.nordicmedicalcentre.com/" target="_blank" rel="noopener noreferrer" class="group block h-full">
           <div class="pf w-full h-64">
             <img src="https://res.cloudinary.com/dgietnwua/image/upload/v1787082013/e2d5e525-2a8a-4ee5-ae4a-4d666bb6ac61.png" alt="Nordiac Medical Center" loading="lazy" class="h-full w-full object-cover" />
           </div>
@@ -318,7 +336,7 @@ body.modal-open{overflow:hidden}
       </article>
 
       <article class="card-h reveal d4 group rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent h-full">
-        <a rel="noopener" href="https://www.abyssinian-beauty-products.co.uk/" target="_blank" rel="noreferrer" class="group block h-full">
+        <a href="https://www.abyssinian-beauty-products.co.uk/" target="_blank" rel="noopener noreferrer" class="group block h-full">
           <div class="pf w-full h-64">
             <img src="https://res.cloudinary.com/dgietnwua/image/upload/v1787082119/7ed812b4-bd51-46aa-ad72-fc31d592f109.png" alt="Abysenia beauty Products" loading="lazy" class="h-full w-full object-cover" />
           </div>
@@ -337,7 +355,7 @@ body.modal-open{overflow:hidden}
       </article>
 
       <article class="card-h reveal d5 group rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent h-full">
-        <a rel="noopener" href="https://www.studiosamuel.org/" target="_blank" rel="noreferrer" class="group block h-full">
+        <a href="https://www.studiosamuel.org/" target="_blank" rel="noopener noreferrer" class="group block h-full">
           <div class="pf w-full h-64">
             <img src="https://res.cloudinary.com/dgietnwua/image/upload/v1787082242/bd33b98b-ee2c-4f70-85f3-84662d6ebc96.png" alt="Samuel Studio" loading="lazy" class="h-full w-full object-cover" />
           </div>
@@ -356,7 +374,7 @@ body.modal-open{overflow:hidden}
       </article>
 
       <article class="card-h reveal d6 group rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent h-full">
-        <a rel="noopener" href="https://www.imaares.com/" target="_blank" rel="noreferrer" class="group block h-full">
+        <a href="https://www.imaares.com/" target="_blank" rel="noopener noreferrer" class="group block h-full">
           <div class="pf w-full h-64">
             <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=800&q=80" alt="Imaares Multi-solutions" loading="lazy" class="h-full w-full object-cover" />
           </div>
@@ -442,7 +460,7 @@ body.modal-open{overflow:hidden}
 
       <div class="reveal order-2 md:order-1 flex items-center justify-center">
         <!-- Increased container height to h-[40rem] and added a custom orange shadow glow -->
-        <div class="pf w-full max-w-[28rem] h-[40rem] mx-auto rounded-3xl border-4 border-accent/80 shadow-[0_20px_50px_rgba(249,115,22,0.25)] overflow-hidden flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
+        <div class="pf w-full max-w-[28rem] h-[28rem] sm:h-[34rem] lg:h-[40rem] mx-auto rounded-3xl border-4 border-accent/80 shadow-[0_20px_50px_rgba(249,115,22,0.25)] overflow-hidden flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
           <img src="https://i.ibb.co/993HjsrG/Chat-GPT-Image-Aug-1-2026-08-05-16-PM.png" alt="Chat GPT Image Aug 1 2026 08-05-16 PM" class="h-full w-auto object-contain" loading="eager" border="0">
         </div>
       </div>
@@ -718,7 +736,7 @@ body.modal-open{overflow:hidden}
 <!-- ═══ CONTACT ═══ -->
 <section id="contact" class="py-24">
   <div class="max-w-6xl mx-auto px-6">
-    <div class="bg-zinc-900 dark:bg-zinc-800 rounded-3xl p-10 md:p-16 relative overflow-hidden">
+    <div class="bg-zinc-900 dark:bg-zinc-800 rounded-3xl p-6 sm:p-10 md:p-16 relative overflow-hidden">
       <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
       <div class="absolute bottom-0 left-0 w-40 h-40 bg-accent/10 rounded-full blur-2xl pointer-events-none" aria-hidden="true"></div>
 

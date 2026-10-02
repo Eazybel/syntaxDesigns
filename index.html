@@ -69,11 +69,16 @@ button,a{touch-action:manipulation}
 
 /* blog carousel */
 #default-carousel{touch-action:pan-y;outline:none}
-#blogCarousel{touch-action:pan-y}
-#blogCarousel [data-carousel-item]{position:absolute;inset:0;width:100%;height:100%}
-#blogCarousel [data-carousel-item] > article{width:min(100%,720px);height:100%;margin:0 auto}
+#default-carousel{width:100%;max-width:52rem;margin-inline:auto}
+#blogCarousel{touch-action:pan-y;min-height:430px}
+#blogCarousel [data-carousel-item]{position:absolute;inset:0;width:100%;height:100%;display:flex;align-items:flex-start;justify-content:center;padding:0 3.25rem}
+#blogCarousel [data-carousel-item] > article{width:min(100%,620px);height:auto;max-height:100%;margin:0 auto;box-shadow:0 10px 30px rgba(0,0,0,.04)}
 #blogCarousel article h3{overflow-wrap:anywhere;word-break:break-word}
-@media (max-width:639px){#blogCarousel{min-height:560px}#blogCarousel [data-carousel-item] > article{width:calc(100% - 64px)}}
+#blogCarousel article .pf{height:150px}
+#blogCarousel article > div:last-child{padding:1.25rem 1.5rem}
+@media (min-width:640px){#blogCarousel{min-height:405px}#blogCarousel [data-carousel-item]{padding-inline:3.5rem}#blogCarousel article .pf{height:165px}}
+@media (min-width:1024px){#blogCarousel{min-height:390px}#blogCarousel [data-carousel-item]{padding-inline:4rem}#blogCarousel article .pf{height:170px}}
+@media (max-width:639px){#blogCarousel{min-height:430px}#blogCarousel [data-carousel-item]{padding-inline:2.75rem}#blogCarousel [data-carousel-item] > article{width:100%}#blogCarousel article .pf{height:135px}#blogCarousel article > div:last-child{padding:1rem 1.125rem}}
 
 /* skill tag */
 .stag{transition:border-color .18s}
@@ -90,6 +95,13 @@ body.modal-open{overflow:hidden}
 .modal-backdrop{background:rgba(9,9,11,.88)}
 .modal-panel{animation:modal-in .24s cubic-bezier(.4,0,.2,1)}
 @keyframes modal-in{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+
+/* refined portfolio polish */
+#work .card-h{min-width:0}
+#work .card-h .pf{overflow:hidden}
+#work .card-h a:focus-visible,#blogCarousel button:focus-visible{outline:2px solid #FF6B2B;outline-offset:3px}
+#about .stag{font-size:.8125rem}
+@media (max-width:767px){#about .grid{gap:2.5rem}#about .pf{max-width:19rem;height:19rem}}
 </style>
 </head>
 
@@ -317,7 +329,7 @@ body.modal-open{overflow:hidden}
               <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">Max View Fitness</h3>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-5">Sweat Box found me on LinkedIn. Delivered remotely. They loved it—now we’re onto project two, with a clean, responsive site built to convert new gym members.</p>
             </div>
-            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nl">Check it out →</span>
+            <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-accent transition-colors nl">View Project <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">→</span></span>
           </div>
         </a>
       </article>
@@ -336,7 +348,7 @@ body.modal-open{overflow:hidden}
               <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">Mahider Photography</h3>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-5">Built a full website for a local photography store—start to finish. The site balances polished visuals with an easy shopping and booking experience.</p>
             </div>
-            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nl">Check it out →</span>
+            <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-accent transition-colors nl">View Project <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">→</span></span>
           </div>
         </a>
       </article>
@@ -355,7 +367,7 @@ body.modal-open{overflow:hidden}
               <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">Nordiac Medical Center</h3>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-5">Built an SEO- and accessibility-focused site for a hospital—they loved it. It prioritizes trust, speed, and clear patient pathways across every screen size.</p>
             </div>
-            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nl">Check it out →</span>
+            <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-accent transition-colors nl">View Project <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">→</span></span>
           </div>
         </a>
       </article>
@@ -374,7 +386,7 @@ body.modal-open{overflow:hidden}
               <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">Abysenia beauty Products</h3>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-5">Built this a year ago—smooth project, solid site, great teamwork. The final design feels polished and easy to maintain for the brand’s product range.</p>
             </div>
-            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nl">Check it out →</span>
+            <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-accent transition-colors nl">View Project <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">→</span></span>
           </div>
         </a>
       </article>
@@ -393,7 +405,7 @@ body.modal-open{overflow:hidden}
               <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">Samuel Studio</h3>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-5">Volunteered a project for the NGO Samuel Studio—happy to support. The site now clearly communicates their mission and makes it easier for visitors to engage and contribute.</p>
             </div>
-            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nl">Check it out →</span>
+            <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-accent transition-colors nl">View Project <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">→</span></span>
           </div>
         </a>
       </article>
@@ -412,7 +424,7 @@ body.modal-open{overflow:hidden}
               <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">Imaares Multi-solutions</h3>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-5">Crafted Imaares.com — a sleek, multi-service platform built for speed, clarity, and user impact. The user experience flows cleanly from service discovery to contact, helping the brand convert visitors into leads.</p>
             </div>
-            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nl">Check it out →</span>
+            <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-accent transition-colors nl">View Project <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">→</span></span>
           </div>
         </a>
       </article>
@@ -431,7 +443,7 @@ body.modal-open{overflow:hidden}
               <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">Hagere (ሀገሬ)</h3>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-5">Hagere (ሀገሬ) is an innovative civic engagement platform built to empower Ethiopian citizens by creating a transparent, inclusive, and intelligent space for public discussion around government policies, national initiatives, and civic matters.</p>
             </div>
-            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nl">Check it out →</span>
+            <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-accent transition-colors nl">View Project <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">→</span></span>
           </div>
         </a>
       </article>
@@ -450,7 +462,7 @@ body.modal-open{overflow:hidden}
               <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">HRIS (Human Resources Information System)</h3>
               <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-5">In today’s fast-paced work environments, having a centralized and secure system to manage employee data is essential. This project demonstrates practical backend architecture, clean API design, and real-world use of file handling — all wrapped in a developer-friendly experience.</p>
             </div>
-            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nl">Check it out →</span>
+            <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-accent transition-colors nl">View Project <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">→</span></span>
           </div>
         </a>
       </article>
@@ -474,7 +486,7 @@ body.modal-open{overflow:hidden}
         <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">DevQuiz Next</h3>
         <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-5">DevQuiz Next is an interactive, full-stack quiz platform designed specifically for software developers to test, challenge, and sharpen their technical knowledge. Built with modern web tech to deliver lightning-fast performance and instant score analytics.</p>
       </div>
-      <span class="inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nl">Check it out →</span>
+      <span class="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-900 dark:text-white group-hover:text-accent transition-colors nl">View Project <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">→</span></span>
     </div>
   </a>
 </article>
@@ -486,23 +498,22 @@ body.modal-open{overflow:hidden}
 <!-- ═══ ABOUT ═══ -->
 <section id="about" class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
   <div class="max-w-6xl mx-auto px-6">
-    <div class="grid md:grid-cols-2 gap-16 items-stretch">
+    <div class="grid md:grid-cols-[0.82fr_1.18fr] gap-10 lg:gap-14 items-center max-w-5xl mx-auto">
 
       <div class="reveal order-2 md:order-1 flex items-center justify-center">
-        <!-- Increased container height to h-[40rem] and added a custom orange shadow glow -->
-        <div class="pf w-full max-w-[28rem] h-[28rem] sm:h-[34rem] lg:h-[40rem] mx-auto rounded-3xl border-4 border-accent/80 shadow-[0_20px_50px_rgba(249,115,22,0.25)] overflow-hidden flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
+        <div class="pf w-full max-w-[20rem] h-[20rem] sm:max-w-[22rem] sm:h-[22rem] lg:max-w-[24rem] lg:h-[24rem] mx-auto rounded-3xl border-2 border-accent/70 shadow-[0_16px_40px_rgba(249,115,22,0.16)] overflow-hidden flex items-center justify-center bg-zinc-100 dark:bg-zinc-800">
           <img src="https://i.ibb.co/993HjsrG/Chat-GPT-Image-Aug-1-2026-08-05-16-PM.png" alt="Chat GPT Image Aug 1 2026 08-05-16 PM" class="h-full w-auto object-contain" loading="eager" border="0">
         </div>
       </div>
 
-      <div class="order-1 md:order-2">
+      <div class="order-1 md:order-2 max-w-2xl">
         <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">About me</p>
-        <h2 class="reveal d1 font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white leading-tight mb-6">A bit about<br>who I am</h2>
-        <p class="reveal d2 text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">
+        <h2 class="reveal d1 font-display font-bold text-3xl sm:text-4xl md:text-[2.65rem] text-zinc-900 dark:text-white leading-tight mb-5">A bit about<br>who I am</h2>
+        <p class="reveal d2 text-sm md:text-[0.95rem] text-zinc-500 dark:text-zinc-400 leading-7 mb-4">
           I'm Ezedin, Experienced full-stack developer and software engineer with a demonstrated history of working in the tech industry. Skilled in Automation, I have a knack for transforming complex problems into simple, manageable solutions. My comprehensive understanding of front-end and back-end technologies allows me to see the big picture and create software that not only works seamlessly but also delivers a top-notch user experience.
 
         </p>
-        <p class="reveal d3 text-zinc-500 dark:text-zinc-400 leading-relaxed mb-8">
+        <p class="reveal d3 text-sm md:text-[0.95rem] text-zinc-500 dark:text-zinc-400 leading-7 mb-6">
           I believe great interfaces are invisible — they get out of the user's way. My work is fast, accessible and built to last. When I'm not coding, you'll find me hiking or hunting for a good espresso.
         </p>
        <div class="reveal d4">
@@ -671,15 +682,15 @@ body.modal-open{overflow:hidden}
 <!-- ═══ BLOG ═══ -->
 <section id="blog" class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
   <div class="max-w-6xl mx-auto px-6">
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-7">
       <div>
         <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Notes &amp; insights</p>
         <h2 class="reveal d1 font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">What I’m learning and sharing</h2>
       </div>
     </div>
 
-    <div id="default-carousel" class="relative w-full" data-carousel="slide" tabindex="0" aria-label="Blog posts carousel">
-      <div id="blogCarousel" class="relative min-h-[520px] sm:min-h-[500px] md:min-h-[470px] overflow-hidden rounded-2xl" aria-live="polite">
+    <div id="default-carousel" class="relative w-full max-w-4xl mx-auto" data-carousel="slide" tabindex="0" aria-label="Blog posts carousel">
+      <div id="blogCarousel" class="relative min-h-[430px] sm:min-h-[405px] md:min-h-[390px] overflow-hidden rounded-2xl" aria-live="polite">
         <div class="duration-700 ease-in-out" data-carousel-item="0">
 <article class="card-h group bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 hover:border-accent">
         <div class="pf w-full h-36 sm:h-40">
@@ -934,5 +945,6 @@ body.modal-open{overflow:hidden}
     </p>
   </div>
 </footer>
+<script src="script.js"></script>
 </body>
 </html>

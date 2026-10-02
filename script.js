@@ -1,6 +1,5 @@
 /* =========================================================
-   SYNTAX-DESIGNS PORTFOLIO
-   Main JavaScript
+   FULL PORTFOLIO JAVASCRIPT
    ========================================================= */
 
 window.tailwind = window.tailwind || {};
@@ -9,13 +8,9 @@ window.tailwind.config = {
   darkMode: 'class',
   theme: {
     extend: {
-      fontFamily: {
-        display: ['PT Sans', 'sans-serif'],
-        body: ['DM Sans', 'sans-serif']
-      },
       colors: {
         accent: '#FF6B2B',
-        'accent-light': '#FF8F5C'
+        'accent-light': '#FF8A55'
       }
     }
   }
@@ -23,230 +18,240 @@ window.tailwind.config = {
 
 
 /* =========================================================
-   MAIN ALPINE APP
+   MAIN APPLICATION
    ========================================================= */
 
-function app() {
-  return {
+document.addEventListener('alpine:init', () => {
+
+  Alpine.data('app', () => ({
+
     dark: false,
     mm: false,
     sc: false,
     s: 'hero',
 
-    confirmationOpen: false,
-    submitting: false,
-    submitted: false,
-    submitError: '',
-    upworkStatus: '',
-
-    /* -----------------------------------------------------
-       INITIALIZATION
-       ----------------------------------------------------- */
-
     init() {
-      /* ---------------------------
-         Dark mode
-         --------------------------- */
 
-      const savedTheme = localStorage.getItem('theme');
+      /*
+       * DARK MODE
+       */
 
-      this.dark =
-        savedTheme === 'dark' ||
-        (
-          !savedTheme &&
+      const storedTheme =
+        localStorage.getItem('theme');
+
+      if (storedTheme === 'dark') {
+        this.dark = true;
+        document.documentElement.classList.add('dark');
+      } else if (storedTheme === 'light') {
+        this.dark = false;
+        document.documentElement.classList.remove('dark');
+      } else {
+        this.dark =
           window.matchMedia &&
-          window.matchMedia('(prefers-color-scheme: dark)').matches
+          window.matchMedia(
+            '(prefers-color-scheme: dark)'
+          ).matches;
+
+        document.documentElement.classList.toggle(
+          'dark',
+          this.dark
         );
-
-      this.$watch('dark', value => {
-        try {
-          localStorage.setItem(
-            'theme',
-            value ? 'dark' : 'light'
-          );
-        } catch (_) {
-          /* localStorage may be unavailable */
-        }
-      });
+      }
 
 
-      /* ---------------------------
-         Scroll state
-         Performance optimized
-         --------------------------- */
-
-      let ticking = false;
-
-      const handleScroll = () => {
-        if (ticking) return;
-
-        ticking = true;
-
-        window.requestAnimationFrame(() => {
-          this.sc = window.scrollY > 20;
-          this.updateSection();
-          ticking = false;
-        });
-      };
+      /*
+       * SCROLL NAVIGATION
+       */
 
       window.addEventListener(
         'scroll',
-        handleScroll,
+        () => {
+          this.sc =
+            window.scrollY > 20;
+
+          this.updateSection();
+        },
         { passive: true }
       );
 
 
-      /* ---------------------------
-         Reveal animations
-         --------------------------- */
+      /*
+       * REVEAL ANIMATIONS
+       */
 
       const revealElements =
         document.querySelectorAll('.reveal');
 
       if (
         'IntersectionObserver' in window &&
-        !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        !window.matchMedia(
+          '(prefers-reduced-motion: reduce)'
+        ).matches
       ) {
-        const observer = new IntersectionObserver(
-          entries => {
-            entries.forEach(entry => {
-              if (!entry.isIntersecting) return;
 
-              entry.target.classList.add('in');
+        const observer =
+          new IntersectionObserver(
+            entries => {
 
-              observer.unobserve(entry.target);
-            });
-          },
-          {
-            threshold: 0.08,
-            rootMargin: '0px 0px -50px 0px'
+              entries.forEach(entry => {
+
+                if (
+                  entry.isIntersecting
+                ) {
+
+                  entry.target.classList.add(
+                    'in'
+                  );
+
+                  observer.unobserve(
+                    entry.target
+                  );
+                }
+
+              });
+
+            },
+            {
+              threshold: 0.12
+            }
+          );
+
+        revealElements.forEach(
+          element => {
+            observer.observe(element);
           }
         );
 
-        revealElements.forEach(element => {
-          observer.observe(element);
-        });
       } else {
+
         /*
-         * If the browser doesn't support IntersectionObserver
-         * or the user prefers reduced motion, reveal everything.
+         * Fallback:
+         * reveal everything immediately.
          */
-        revealElements.forEach(element => {
-          element.classList.add('in');
-        });
+
+        revealElements.forEach(
+          element => {
+            element.classList.add('in');
+          }
+        );
       }
 
 
-      /* ---------------------------
-         Current year
-         --------------------------- */
-
-      const yearElement =
-        document.getElementById('yr');
-
-      if (yearElement) {
-        yearElement.textContent =
-          new Date().getFullYear();
-      }
-
-
-      /* ---------------------------
-         Initial section detection
-         --------------------------- */
+      /*
+       * INITIAL SECTION
+       */
 
       this.updateSection();
     },
 
 
-    /* =====================================================
-       CONTACT CONFIRMATION
-       ===================================================== */
+    /*
+     * TOGGLE DARK MODE
+     */
 
-    openConfirmation() {
-      if (!this.$refs.contactForm) return;
+    toggleDark() {
 
-      if (!this.$refs.contactForm.reportValidity()) {
-        return;
-      }
+      this.dark = !this.dark;
 
-      this.submitError = '';
-      this.submitted = false;
-      this.confirmationOpen = true;
+      document.documentElement.classList.toggle(
+        'dark',
+        this.dark
+      );
 
-      document.body.classList.add('modal-open');
+      localStorage.setItem(
+        'theme',
+        this.dark ? 'dark' : 'light'
+      );
     },
 
 
-    closeConfirmation() {
+    /*
+     * MOBILE MENU
+     */
+
+    closeMenu() {
+      this.mm = false;
+    },
+
+
+    /*
+     * SCROLL TO SECTION
+     */
+
+    scrollTo(id) {
+
+      const element =
+        document.getElementById(id);
+
+      if (!element) return;
+
+      const offset = 80;
+
+      const top =
+        element.getBoundingClientRect().top +
+        window.scrollY -
+        offset;
+
+      window.scrollTo({
+        top,
+        behavior: 'smooth'
+      });
+
+      this.mm = false;
+    },
+
+
+    /*
+     * CONTACT FORM
+     */
+
+    submitting: false,
+
+    async submitForm(event) {
+
       if (this.submitting) return;
 
-      this.confirmationOpen = false;
-      this.submitted = false;
-
-      document.body.classList.remove('modal-open');
-    },
-
-
-    /* =====================================================
-       SEND CONTACT INQUIRY
-       ===================================================== */
-
-    async sendInquiry(route) {
-      if (!this.$refs.contactForm) return;
-
       this.submitting = true;
-      this.submitError = '';
 
-      this.upworkStatus =
-        route === 'upwork'
-          ? 'Upwork verified'
-          : 'upwork-status_';
+      const form =
+        event.target;
+
+      const formData =
+        new FormData(form);
 
       try {
-        const response = await fetch(
-          this.$refs.contactForm.action,
-          {
-            method: 'POST',
-            body: new FormData(
-              this.$refs.contactForm
-            ),
-            headers: {
-              Accept: 'application/json'
+
+        const response =
+          await fetch(
+            form.action,
+            {
+              method: form.method || 'POST',
+              body: formData,
+              headers: {
+                Accept: 'application/json'
+              }
             }
-          }
-        );
+          );
 
         if (!response.ok) {
           throw new Error(
-            'Formspree request failed'
+            'Form submission failed'
           );
         }
 
-        this.$refs.contactForm.reset();
-        this.upworkStatus = '';
+        form.reset();
 
-        /* ---------------------------
-           Upwork
-           --------------------------- */
-
-        if (route === 'upwork') {
-          window.location.assign(
-            'https://www.upwork.com/freelancers/~01362d3f829f520be8'
-          );
-
-          return;
-        }
-
-        /* ---------------------------
-           Meeting / normal inquiry
-           --------------------------- */
-
-        this.submitted = true;
+        alert(
+          'Thanks! Your message has been sent.'
+        );
 
       } catch (error) {
 
-        this.submitError =
-          'Something went wrong while sending your request. Please try again.';
+        console.error(error);
+
+        alert(
+          'Something went wrong while sending your request. Please try again.'
+        );
 
       } finally {
 
@@ -260,13 +265,16 @@ function app() {
        ===================================================== */
 
     updateSection() {
+
       const bottomReached =
         window.innerHeight +
         window.scrollY >=
         document.body.scrollHeight - 80;
 
       if (bottomReached) {
+
         this.s = 'contact';
+
         return;
       }
 
@@ -281,6 +289,7 @@ function app() {
       ];
 
       for (const id of sections) {
+
         const element =
           document.getElementById(id);
 
@@ -290,13 +299,16 @@ function app() {
           element.offsetTop - 140;
 
         if (window.scrollY >= offset) {
+
           this.s = id;
+
           return;
         }
       }
     }
-  };
-}
+  }));
+
+});
 
 
 /* =========================================================
@@ -304,15 +316,12 @@ function app() {
    ========================================================= */
 
 function scrollBlog(direction) {
-  const slider = window.blogSlider;
 
-  if (!slider || slider.animating) {
-    return;
-  }
+  const slider =
+    window.blogSlider;
 
-  /*
-   * Pause autoplay briefly after manual interaction.
-   */
+  if (!slider) return;
+
   slider.pausedUntil =
     Date.now() + 4500;
 
@@ -325,131 +334,142 @@ function scrollBlog(direction) {
    ========================================================= */
 
 function initBlogSlider() {
+
   const carousel =
-    document.getElementById('blogCarousel');
+    document.getElementById(
+      'default-carousel'
+    );
 
-  if (!carousel || window.blogSlider) {
+  const wrapper =
+    document.getElementById(
+      'blogCarousel'
+    );
+
+  if (
+    !carousel ||
+    !wrapper ||
+    window.blogSlider
+  ) {
     return;
   }
 
-  const originals =
+  const slides =
     Array.from(
-      carousel.querySelectorAll('article')
+      wrapper.querySelectorAll(
+        '[data-carousel-item]'
+      )
     );
 
-  if (!originals.length) {
-    return;
-  }
-
-  const total = originals.length;
-
-
-  /* -------------------------------------------------------
-     Clone cards for infinite scrolling
-     ------------------------------------------------------- */
-
-  const before =
-    originals.map(card =>
-      card.cloneNode(true)
+  const indicators =
+    Array.from(
+      carousel.querySelectorAll(
+        '[data-carousel-slide-to]'
+      )
     );
 
-  const after =
-    originals.map(card =>
-      card.cloneNode(true)
-    );
+  if (!slides.length) return;
 
-
-  before.forEach(card => {
-    card.classList.remove('reveal');
-
-    carousel.insertBefore(
-      card,
-      carousel.firstChild
-    );
-  });
-
-
-  after.forEach(card => {
-    card.classList.remove('reveal');
-
-    carousel.appendChild(card);
-  });
-
-
-  /* -------------------------------------------------------
-     Slider state
-     ------------------------------------------------------- */
 
   const slider = {
 
     carousel,
+    wrapper,
+    slides,
+    indicators,
 
-    total,
-
-    index: total,
-
-    animating: false,
-
-    paused: false,
-
-    pausedUntil: 0,
+    index: 0,
 
     timer: null,
 
-    animationDuration: 760,
+    animating: false,
+
+    pausedUntil: 0,
+
+    interval: 5000,
+
+    animationDuration: 700,
 
 
-    /* -----------------------------------------------------
-       Calculate one card movement
-       ----------------------------------------------------- */
+    /*
+     * SHOW SLIDE
+     */
 
-    step() {
-      const card =
-        carousel.querySelector('article');
+    show(nextIndex) {
 
-      if (!card) {
-        return 0;
-      }
+      const count =
+        this.slides.length;
 
-      const styles =
-        getComputedStyle(carousel);
+      this.index =
+        (nextIndex + count) % count;
 
-      const gap =
-        parseFloat(
-          styles.columnGap ||
-          styles.gap
-        ) || 24;
 
-      return (
-        card.getBoundingClientRect().width +
-        gap
+      this.slides.forEach(
+        (slide, i) => {
+
+          const active =
+            i === this.index;
+
+          slide.classList.toggle(
+            'hidden',
+            !active
+          );
+
+          slide.setAttribute(
+            'aria-hidden',
+            String(!active)
+          );
+        }
+      );
+
+
+      this.indicators.forEach(
+        (dot, i) => {
+
+          const active =
+            i === this.index;
+
+          dot.setAttribute(
+            'aria-current',
+            String(active)
+          );
+
+          dot.classList.toggle(
+            'bg-accent',
+            active
+          );
+
+          dot.classList.toggle(
+            'bg-zinc-300',
+            !active
+          );
+
+          dot.classList.toggle(
+            'dark:bg-zinc-600',
+            !active
+          );
+        }
       );
     },
 
 
-    /* -----------------------------------------------------
-       Move slider
-       ----------------------------------------------------- */
+    /*
+     * MOVE
+     */
 
     move(direction) {
-      if (this.animating) {
+
+      if (
+        this.animating ||
+        this.slides.length < 2
+      ) {
         return;
       }
-
-      const step =
-        this.step();
-
-      if (!step) {
-        return;
-      }
-
-      const nextIndex =
-        this.index + direction;
-
-      this.index = nextIndex;
 
       this.animating = true;
 
+      this.show(
+        this.index + direction
+      );
 
       const reducedMotion =
         window.matchMedia &&
@@ -457,339 +477,307 @@ function initBlogSlider() {
           '(prefers-reduced-motion: reduce)'
         ).matches;
 
-
-      carousel.scrollTo({
-        left:
-          Math.round(
-            nextIndex * step
-          ),
-        behavior:
-          reducedMotion
-            ? 'auto'
-            : 'smooth'
-      });
-
-
       window.setTimeout(
         () => {
 
-          /* ---------------------------------------------
-             Jump from right clones back to original cards
-             --------------------------------------------- */
-
-          if (
-            this.index >=
-            this.total * 2
-          ) {
-            this.index -= this.total;
-
-            carousel.scrollTo({
-              left:
-                Math.round(
-                  this.index *
-                  this.step()
-                ),
-              behavior: 'auto'
-            });
-          }
-
-
-          /* ---------------------------------------------
-             Jump from left clones forward
-             --------------------------------------------- */
-
-          else if (
-            this.index < this.total
-          ) {
-            this.index += this.total;
-
-            carousel.scrollTo({
-              left:
-                Math.round(
-                  this.index *
-                  this.step()
-                ),
-              behavior: 'auto'
-            });
-          }
-
-
           this.animating = false;
 
+          this.restart();
+
         },
-        this.animationDuration
+        reducedMotion
+          ? 0
+          : this.animationDuration
       );
     },
 
 
-    /* -----------------------------------------------------
-       Autoplay
-       ----------------------------------------------------- */
+    /*
+     * AUTOPLAY
+     */
 
-    schedule() {
+    restart() {
+
       window.clearTimeout(
         this.timer
       );
 
-
-      /*
-       * Standard ~4.5 second autoplay timing.
-       */
       this.timer =
         window.setTimeout(
           () => {
 
-            const pageVisible =
-              document.visibilityState ===
-              'visible';
-
-            const motionAllowed =
-              !(
-                window.matchMedia &&
-                window.matchMedia(
-                  '(prefers-reduced-motion: reduce)'
-                ).matches
-              );
-
-
             if (
-              !this.paused &&
-              pageVisible &&
-              motionAllowed &&
-              Date.now() >=
-              this.pausedUntil
+              document.hidden ||
+              Date.now() <
+                this.pausedUntil
             ) {
-              this.move(1);
+
+              this.restart();
+
+              return;
             }
 
-
-            this.schedule();
+            this.move(1);
 
           },
-          4500
+          this.interval
         );
+    },
+
+
+    /*
+     * PAUSE
+     */
+
+    pause() {
+
+      window.clearTimeout(
+        this.timer
+      );
+    },
+
+
+    /*
+     * KEYBOARD
+     */
+
+    handleKeydown(event) {
+
+      if (
+        event.key ===
+        'ArrowLeft'
+      ) {
+
+        event.preventDefault();
+
+        this.pausedUntil =
+          Date.now() + 4500;
+
+        this.move(-1);
+
+      } else if (
+        event.key ===
+        'ArrowRight'
+      ) {
+
+        event.preventDefault();
+
+        this.pausedUntil =
+          Date.now() + 4500;
+
+        this.move(1);
+
+      } else if (
+        event.key === 'Home'
+      ) {
+
+        event.preventDefault();
+
+        this.pausedUntil =
+          Date.now() + 4500;
+
+        this.show(0);
+
+        this.restart();
+
+      } else if (
+        event.key === 'End'
+      ) {
+
+        event.preventDefault();
+
+        this.pausedUntil =
+          Date.now() + 4500;
+
+        this.show(
+          this.slides.length - 1
+        );
+
+        this.restart();
+      }
     }
   };
 
 
-  window.blogSlider = slider;
+  /*
+   * GLOBAL REFERENCE
+   */
+
+  window.blogSlider =
+    slider;
 
 
-  /* -------------------------------------------------------
-     Set initial position
-     ------------------------------------------------------- */
+  /*
+   * INDICATORS
+   */
 
-  carousel.scrollLeft =
-    Math.round(
-      slider.index *
-      slider.step()
-    );
+  indicators.forEach(
+    (dot, index) => {
+
+      dot.addEventListener(
+        'click',
+        () => {
+
+          slider.pausedUntil =
+            Date.now() + 4500;
+
+          slider.show(index);
+
+          slider.restart();
+        }
+      );
+    }
+  );
 
 
-  /* -------------------------------------------------------
-     Mouse interaction
-     ------------------------------------------------------- */
+  /*
+   * KEYBOARD
+   */
+
+  carousel.addEventListener(
+    'keydown',
+    event =>
+      slider.handleKeydown(event)
+  );
+
+
+  /*
+   * MOUSE PAUSE
+   */
 
   carousel.addEventListener(
     'mouseenter',
-    () => {
-      slider.paused = true;
-    }
+    () => slider.pause()
   );
-
 
   carousel.addEventListener(
     'mouseleave',
-    () => {
-      slider.paused = false;
-
-      slider.pausedUntil =
-        Date.now() + 1200;
-    }
+    () => slider.restart()
   );
 
 
-  /* -------------------------------------------------------
-     Keyboard / focus interaction
-     ------------------------------------------------------- */
+  /*
+   * FOCUS PAUSE
+   */
 
   carousel.addEventListener(
     'focusin',
-    () => {
-      slider.paused = true;
-    }
+    () => slider.pause()
   );
-
 
   carousel.addEventListener(
     'focusout',
-    () => {
-      slider.paused = false;
+    () => slider.restart()
+  );
 
-      slider.pausedUntil =
-        Date.now() + 1500;
+
+  /*
+   * TOUCH / SWIPE
+   */
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+
+  wrapper.addEventListener(
+    'touchstart',
+    event => {
+
+      const touch =
+        event.changedTouches[0];
+
+      touchStartX =
+        touch.clientX;
+
+      touchStartY =
+        touch.clientY;
+
+    },
+    {
+      passive: true
     }
   );
 
 
-  /* -------------------------------------------------------
-     Touch interaction
-     ------------------------------------------------------- */
-
-  carousel.addEventListener(
-    'touchstart',
-    () => {
-
-      slider.animating = false;
-      slider.paused = true;
-
-    },
-    { passive: true }
-  );
-
-
-  carousel.addEventListener(
+  wrapper.addEventListener(
     'touchend',
-    () => {
+    event => {
 
-      window.setTimeout(
-        () => {
+      const touch =
+        event.changedTouches[0];
 
-          const step =
-            slider.step();
+      const dx =
+        touch.clientX -
+        touchStartX;
 
-          if (!step) {
-            slider.paused = false;
-            return;
-          }
-
-
-          slider.index =
-            Math.round(
-              carousel.scrollLeft /
-              step
-            );
+      const dy =
+        touch.clientY -
+        touchStartY;
 
 
-          /* ---------------------------------------------
-             Keep the slider inside the clone loop
-             --------------------------------------------- */
-
-          if (
-            slider.index >=
-            slider.total * 2
-          ) {
-            slider.index -=
-              slider.total;
-
-            carousel.scrollTo({
-              left:
-                Math.round(
-                  slider.index *
-                  slider.step()
-                ),
-              behavior: 'auto'
-            });
-          }
+      if (
+        Math.abs(dx) < 45 ||
+        Math.abs(dx) <
+          Math.abs(dy)
+      ) {
+        return;
+      }
 
 
-          else if (
-            slider.index <
-            slider.total
-          ) {
-            slider.index +=
-              slider.total;
-
-            carousel.scrollTo({
-              left:
-                Math.round(
-                  slider.index *
-                  slider.step()
-                ),
-              behavior: 'auto'
-            });
-          }
+      slider.pausedUntil =
+        Date.now() + 4500;
 
 
-          slider.paused = false;
-
-          slider.pausedUntil =
-            Date.now() + 1800;
-
-        },
-        150
+      slider.move(
+        dx < 0
+          ? 1
+          : -1
       );
 
     },
-    { passive: true }
+    {
+      passive: true
+    }
   );
 
 
-  /* -------------------------------------------------------
-     Resize handling
-     ------------------------------------------------------- */
-
-  let resizeTimer = null;
-
-  window.addEventListener(
-    'resize',
-    () => {
-
-      window.clearTimeout(
-        resizeTimer
-      );
-
-      resizeTimer =
-        window.setTimeout(
-          () => {
-
-            const step =
-              slider.step();
-
-            if (!step) return;
-
-            carousel.scrollLeft =
-              Math.round(
-                slider.index *
-                step
-              );
-
-          },
-          120
-        );
-    },
-    { passive: true }
-  );
-
-
-  /* -------------------------------------------------------
-     Pause when browser tab isn't visible
-     ------------------------------------------------------- */
+  /*
+   * TAB VISIBILITY
+   */
 
   document.addEventListener(
     'visibilitychange',
-    () => {
-
-      if (
-        document.visibilityState ===
-        'hidden'
-      ) {
-        slider.paused = true;
-      } else {
-        slider.paused = false;
-
-        slider.pausedUntil =
-          Date.now() + 1500;
-      }
-    }
+    () =>
+      document.hidden
+        ? slider.pause()
+        : slider.restart()
   );
 
 
-  /* -------------------------------------------------------
-     Start autoplay
-     ------------------------------------------------------- */
+  /*
+   * INITIAL SLIDE
+   */
 
-  slider.schedule();
+  slider.show(0);
+
+
+  /*
+   * REDUCED MOTION
+   */
+
+  if (
+    window.matchMedia &&
+    window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches
+  ) {
+
+    slider.pause();
+
+  } else {
+
+    slider.restart();
+  }
 }
 
 
@@ -798,7 +786,8 @@ function initBlogSlider() {
    ========================================================= */
 
 if (
-  document.readyState === 'loading'
+  document.readyState ===
+  'loading'
 ) {
 
   document.addEventListener(

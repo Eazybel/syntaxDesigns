@@ -29,6 +29,10 @@ document.addEventListener('alpine:init', () => {
     mm: false,
     sc: false,
     s: 'hero',
+    confirmationOpen: false,
+    submitted: false,
+    submitError: '',
+    upworkStatus: '',
 
     init() {
 
@@ -207,54 +211,64 @@ document.addEventListener('alpine:init', () => {
 
     submitting: false,
 
-    async submitForm(event) {
+    openConfirmation() {
+      const form = this.$refs.contactForm;
 
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      this.submitError = '';
+      this.submitted = false;
+      this.confirmationOpen = true;
+    },
+
+    closeConfirmation() {
+      this.confirmationOpen = false;
+      this.submitted = false;
+      this.submitError = '';
+    },
+
+    async sendInquiry(channel) {
       if (this.submitting) return;
 
+      const form = this.$refs.contactForm;
+      const formData = new FormData(form);
+      const isUpwork = channel === 'upwork';
+
+      formData.set(
+        'upwork_status',
+        isUpwork ? 'Requested via Upwork' : 'Meeting requested'
+      );
+
       this.submitting = true;
-
-      const form =
-        event.target;
-
-      const formData =
-        new FormData(form);
+      this.submitError = '';
 
       try {
-
-        const response =
-          await fetch(
-            form.action,
-            {
-              method: form.method || 'POST',
-              body: formData,
-              headers: {
-                Accept: 'application/json'
-              }
-            }
-          );
+        const response = await fetch(form.action, {
+          method: form.method || 'POST',
+          body: formData,
+          headers: { Accept: 'application/json' }
+        });
 
         if (!response.ok) {
-          throw new Error(
-            'Form submission failed'
-          );
+          throw new Error('Form submission failed');
         }
 
         form.reset();
+        this.upworkStatus = '';
 
-        alert(
-          'Thanks! Your message has been sent.'
-        );
+        if (isUpwork) {
+          window.location.assign('https://www.upwork.com/');
+          return;
+        }
 
+        this.submitted = true;
       } catch (error) {
-
         console.error(error);
-
-        alert(
-          'Something went wrong while sending your request. Please try again.'
-        );
-
+        this.submitError = 'Your message could not be sent. Please try again.';
       } finally {
-
         this.submitting = false;
       }
     },

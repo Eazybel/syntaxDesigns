@@ -1,816 +1,795 @@
 /* =========================================================
-   FULL PORTFOLIO JAVASCRIPT
+   SYNTAX-DESIGNS PORTFOLIO — INTERACTIONS
    ========================================================= */
 
 window.tailwind = window.tailwind || {};
-
 window.tailwind.config = {
   darkMode: 'class',
   theme: {
     extend: {
       colors: {
         accent: '#FF6B2B',
-        'accent-light': '#FF8A55'
+        'accent-light': '#FF8F5C'
       }
     }
   }
 };
 
+(function () {
+  'use strict';
 
-/* =========================================================
-   MAIN APPLICATION
-   ========================================================= */
+  const reducedMotion = () =>
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-document.addEventListener('alpine:init', () => {
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('app', () => ({
+      dark: false,
+      mm: false,
+      sc: false,
+      s: 'hero',
 
-  Alpine.data('app', () => ({
+      confirmationOpen: false,
+      submitted: false,
+      submitError: '',
+      upworkStatus: '',
+      submitting: false,
 
-    dark: false,
-    mm: false,
-    sc: false,
-    s: 'hero',
-    confirmationOpen: false,
-    submitted: false,
-    submitError: '',
-    upworkStatus: '',
+      init() {
+        this.initTheme();
+        this.initReveal();
+        this.updateSection();
 
-    init() {
+        window.addEventListener(
+          'scroll',
+          () => {
+            this.sc = window.scrollY > 20;
+            this.updateSection();
+          },
+          { passive: true }
+        );
 
-      /*
-       * DARK MODE
-       */
+        window.addEventListener(
+          'resize',
+          () => this.updateSection(),
+          { passive: true }
+        );
 
-      const storedTheme =
-        localStorage.getItem('theme');
+        document
+          .getElementById('yr')
+          ?.replaceChildren(String(new Date().getFullYear()));
+      },
 
-      if (storedTheme === 'dark') {
-        this.dark = true;
-        document.documentElement.classList.add('dark');
-      } else if (storedTheme === 'light') {
-        this.dark = false;
-        document.documentElement.classList.remove('dark');
-      } else {
+      initTheme() {
+        const saved = localStorage.getItem('theme');
+
         this.dark =
-          window.matchMedia &&
-          window.matchMedia(
-            '(prefers-color-scheme: dark)'
-          ).matches;
+          saved === 'dark' ||
+          (!saved &&
+            window.matchMedia?.(
+              '(prefers-color-scheme: dark)'
+            ).matches);
 
         document.documentElement.classList.toggle(
           'dark',
           this.dark
         );
-      }
+      },
 
+      toggleDark() {
+        this.dark = !this.dark;
 
-      /*
-       * SCROLL NAVIGATION
-       */
+        document.documentElement.classList.toggle(
+          'dark',
+          this.dark
+        );
 
-      window.addEventListener(
-        'scroll',
-        () => {
-          this.sc =
-            window.scrollY > 20;
+        localStorage.setItem(
+          'theme',
+          this.dark ? 'dark' : 'light'
+        );
+      },
 
-          this.updateSection();
-        },
-        { passive: true }
-      );
+      closeMenu() {
+        this.mm = false;
+      },
 
+      scrollTo(id) {
+        const el = document.getElementById(id);
 
-      /*
-       * REVEAL ANIMATIONS
-       */
+        if (!el) return;
 
-      const revealElements =
-        document.querySelectorAll('.reveal');
+        const top =
+          el.getBoundingClientRect().top +
+          window.scrollY -
+          72;
 
-      if (
-        'IntersectionObserver' in window &&
-        !window.matchMedia(
-          '(prefers-reduced-motion: reduce)'
-        ).matches
-      ) {
+        window.scrollTo({
+          top,
+          behavior: reducedMotion()
+            ? 'auto'
+            : 'smooth'
+        });
+
+        this.mm = false;
+      },
+
+      initReveal() {
+        const items =
+          document.querySelectorAll('.reveal');
+
+        if (
+          !('IntersectionObserver' in window) ||
+          reducedMotion()
+        ) {
+          items.forEach(el =>
+            el.classList.add('in')
+          );
+
+          return;
+        }
 
         const observer =
           new IntersectionObserver(
             entries => {
-
               entries.forEach(entry => {
-
-                if (
-                  entry.isIntersecting
-                ) {
-
-                  entry.target.classList.add(
-                    'in'
-                  );
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('in');
 
                   observer.unobserve(
                     entry.target
                   );
                 }
-
               });
-
             },
             {
-              threshold: 0.12
+              threshold: 0.1,
+              rootMargin:
+                '0px 0px -30px 0px'
             }
           );
 
-        revealElements.forEach(
-          element => {
-            observer.observe(element);
-          }
+        items.forEach(el =>
+          observer.observe(el)
         );
+      },
 
-      } else {
+      updateSection() {
+        const ids = [
+          'hero',
+          'services',
+          'work',
+          'process',
+          'about',
+          'stack',
+          'reviews',
+          'blog',
+          'contact'
+        ];
 
-        /*
-         * Fallback:
-         * reveal everything immediately.
-         */
+        const marker =
+          window.scrollY + 150;
 
-        revealElements.forEach(
-          element => {
-            element.classList.add('in');
+        let current = 'hero';
+
+        ids.forEach(id => {
+          const el =
+            document.getElementById(id);
+
+          if (
+            el &&
+            el.offsetTop <= marker
+          ) {
+            current = id;
           }
-        );
-      }
-
-
-      /*
-       * INITIAL SECTION
-       */
-
-      this.updateSection();
-    },
-
-
-    /*
-     * TOGGLE DARK MODE
-     */
-
-    toggleDark() {
-
-      this.dark = !this.dark;
-
-      document.documentElement.classList.toggle(
-        'dark',
-        this.dark
-      );
-
-      localStorage.setItem(
-        'theme',
-        this.dark ? 'dark' : 'light'
-      );
-    },
-
-
-    /*
-     * MOBILE MENU
-     */
-
-    closeMenu() {
-      this.mm = false;
-    },
-
-
-    /*
-     * SCROLL TO SECTION
-     */
-
-    scrollTo(id) {
-
-      const element =
-        document.getElementById(id);
-
-      if (!element) return;
-
-      const offset = 80;
-
-      const top =
-        element.getBoundingClientRect().top +
-        window.scrollY -
-        offset;
-
-      window.scrollTo({
-        top,
-        behavior: 'smooth'
-      });
-
-      this.mm = false;
-    },
-
-
-    /*
-     * CONTACT FORM
-     */
-
-    submitting: false,
-
-    openConfirmation() {
-      const form = this.$refs.contactForm;
-
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
-
-      this.submitError = '';
-      this.submitted = false;
-      this.confirmationOpen = true;
-    },
-
-    closeConfirmation() {
-      this.confirmationOpen = false;
-      this.submitted = false;
-      this.submitError = '';
-    },
-
-    async sendInquiry(channel) {
-      if (this.submitting) return;
-
-      const form = this.$refs.contactForm;
-      const formData = new FormData(form);
-      const isUpwork = channel === 'upwork';
-
-      formData.set(
-        'upwork_status',
-        isUpwork ? 'Requested via Upwork' : 'Meeting requested'
-      );
-
-      this.submitting = true;
-      this.submitError = '';
-
-      try {
-        const response = await fetch(form.action, {
-          method: form.method || 'POST',
-          body: formData,
-          headers: { Accept: 'application/json' }
         });
 
-        if (!response.ok) {
-          throw new Error('Form submission failed');
-        }
+        this.s = current;
+      },
 
-        form.reset();
-        this.upworkStatus = '';
+      openConfirmation() {
+        const form =
+          this.$refs.contactForm;
 
-        if (isUpwork) {
-          window.location.assign('https://www.upwork.com/');
+        if (!form.checkValidity()) {
+          form.reportValidity();
           return;
         }
 
-        this.submitted = true;
-      } catch (error) {
-        console.error(error);
-        this.submitError = 'Your message could not be sent. Please try again.';
-      } finally {
-        this.submitting = false;
-      }
-    },
+        this.submitError = '';
+        this.submitted = false;
+        this.confirmationOpen = true;
 
+        document.body.classList.add(
+          'modal-open'
+        );
+      },
 
-    /* =====================================================
-       ACTIVE NAVIGATION SECTION
-       ===================================================== */
+      closeConfirmation() {
+        this.confirmationOpen = false;
+        this.submitted = false;
+        this.submitError = '';
 
-    updateSection() {
+        document.body.classList.remove(
+          'modal-open'
+        );
+      },
 
-      const bottomReached =
-        window.innerHeight +
-        window.scrollY >=
-        document.body.scrollHeight - 80;
+      async sendInquiry(channel) {
+        if (this.submitting) return;
 
-      if (bottomReached) {
+        const form =
+          this.$refs.contactForm;
 
-        this.s = 'contact';
+        const formData =
+          new FormData(form);
 
-        return;
-      }
+        const isUpwork =
+          channel === 'upwork';
 
-      const sections = [
-        'contact',
-        'blog',
-        'reviews',
-        'about',
-        'work',
-        'services',
-        'hero'
-      ];
+        formData.set(
+          'upwork_status',
+          isUpwork
+            ? 'Requested via Upwork'
+            : 'Meeting requested'
+        );
 
-      for (const id of sections) {
+        this.submitting = true;
+        this.submitError = '';
 
-        const element =
-          document.getElementById(id);
+        try {
+          const response =
+            await fetch(form.action, {
+              method:
+                form.method || 'POST',
 
-        if (!element) continue;
+              body: formData,
 
-        const offset =
-          element.offsetTop - 140;
+              headers: {
+                Accept:
+                  'application/json'
+              }
+            });
 
-        if (window.scrollY >= offset) {
+          if (!response.ok) {
+            throw new Error(
+              'Form submission failed'
+            );
+          }
 
-          this.s = id;
+          form.reset();
+          this.upworkStatus = '';
 
-          return;
+          if (isUpwork) {
+            window.location.assign(
+              'https://www.upwork.com/'
+            );
+
+            return;
+          }
+
+          this.submitted = true;
+        } catch (error) {
+          console.error(error);
+
+          this.submitError =
+            'Your message could not be sent. Please try again.';
+        } finally {
+          this.submitting = false;
         }
       }
+    }));
+  });
+
+
+  /* =========================================================
+     BLOG CAROUSEL
+     ========================================================= */
+
+  function initBlogSlider() {
+    const carousel =
+      document.getElementById(
+        'default-carousel'
+      );
+
+    const wrapper =
+      document.getElementById(
+        'blogCarousel'
+      );
+
+    if (
+      !carousel ||
+      !wrapper ||
+      window.blogSlider
+    ) {
+      return;
     }
-  }));
 
-});
-
-
-/* =========================================================
-   BLOG CAROUSEL
-   ========================================================= */
-
-function scrollBlog(direction) {
-
-  const slider =
-    window.blogSlider;
-
-  if (!slider) return;
-
-  slider.pausedUntil =
-    Date.now() + 4500;
-
-  slider.move(direction);
-}
-
-
-/* =========================================================
-   INITIALIZE BLOG SLIDER
-   ========================================================= */
-
-function initBlogSlider() {
-
-  const carousel =
-    document.getElementById(
-      'default-carousel'
-    );
-
-  const wrapper =
-    document.getElementById(
-      'blogCarousel'
-    );
-
-  if (
-    !carousel ||
-    !wrapper ||
-    window.blogSlider
-  ) {
-    return;
-  }
-
-  const slides =
-    Array.from(
-      wrapper.querySelectorAll(
+    const slides = [
+      ...wrapper.querySelectorAll(
         '[data-carousel-item]'
       )
-    );
+    ];
 
-  const indicators =
-    Array.from(
-      carousel.querySelectorAll(
+    const indicators = [
+      ...carousel.querySelectorAll(
         '[data-carousel-slide-to]'
       )
-    );
+    ];
 
-  if (!slides.length) return;
-
-
-  const slider = {
-
-    carousel,
-    wrapper,
-    slides,
-    indicators,
-
-    index: 0,
-
-    timer: null,
-
-    animating: false,
-
-    pausedUntil: 0,
-
-    interval: 5000,
-
-    animationDuration: 700,
-
-
-    /*
-     * SHOW SLIDE
-     */
-
-    show(nextIndex) {
-
-      const count =
-        this.slides.length;
-
-      this.index =
-        (nextIndex + count) % count;
-
-
-      this.slides.forEach(
-        (slide, i) => {
-
-          const active =
-            i === this.index;
-
-          slide.classList.toggle(
-            'hidden',
-            !active
-          );
-
-          slide.setAttribute(
-            'aria-hidden',
-            String(!active)
-          );
-        }
+    const prev =
+      carousel.querySelector(
+        '[data-carousel-prev]'
       );
 
-
-      this.indicators.forEach(
-        (dot, i) => {
-
-          const active =
-            i === this.index;
-
-          dot.setAttribute(
-            'aria-current',
-            String(active)
-          );
-
-          dot.classList.toggle(
-            'bg-accent',
-            active
-          );
-
-          dot.classList.toggle(
-            'bg-zinc-300',
-            !active
-          );
-
-          dot.classList.toggle(
-            'dark:bg-zinc-600',
-            !active
-          );
-        }
+    const next =
+      carousel.querySelector(
+        '[data-carousel-next]'
       );
-    },
+
+    if (!slides.length) return;
 
 
-    /*
-     * MOVE
-     */
+    const slider = {
+      index: 0,
 
-    move(direction) {
+      timer: null,
 
-      if (
-        this.animating ||
-        this.slides.length < 2
+      interval: 5500,
+
+      paused: false,
+
+      pausedUntil: 0,
+
+      touchX: 0,
+
+      touchY: 0,
+
+
+      syncHeight() {
+        const active =
+          slides[this.index];
+
+        if (!active) return;
+
+        const article =
+          active.querySelector(
+            'article'
+          );
+
+        if (!article) return;
+
+        requestAnimationFrame(() => {
+          const height =
+            Math.max(
+              article.offsetHeight + 32,
+              window.innerWidth < 640
+                ? 470
+                : 410
+            );
+
+          wrapper.style.height =
+            `${height}px`;
+        });
+      },
+
+
+      show(
+        index,
+        direction = 1
       ) {
-        return;
-      }
+        const count =
+          slides.length;
 
-      this.animating = true;
+        this.index =
+          (index + count) %
+          count;
 
-      this.show(
-        this.index + direction
-      );
+        slides.forEach(
+          (slide, i) => {
+            const active =
+              i === this.index;
 
-      const reducedMotion =
-        window.matchMedia &&
-        window.matchMedia(
-          '(prefers-reduced-motion: reduce)'
-        ).matches;
+            slide.classList.toggle(
+              'blog-slide-active',
+              active
+            );
 
-      window.setTimeout(
-        () => {
+            slide.setAttribute(
+              'aria-hidden',
+              String(!active)
+            );
 
-          this.animating = false;
+            slide.style.transform =
+              active
+                ? 'none'
+                : `translateX(${
+                    direction > 0
+                      ? 28
+                      : -28
+                  }px)`;
+          }
+        );
 
-          this.restart();
+        indicators.forEach(
+          (dot, i) => {
+            const active =
+              i === this.index;
 
-        },
-        reducedMotion
-          ? 0
-          : this.animationDuration
-      );
-    },
+            dot.setAttribute(
+              'aria-current',
+              String(active)
+            );
+
+            dot.classList.toggle(
+              'bg-accent',
+              active
+            );
+
+            dot.classList.toggle(
+              'bg-zinc-300',
+              !active
+            );
+
+            dot.classList.toggle(
+              'dark:bg-zinc-600',
+              !active
+            );
+          }
+        );
+
+        this.syncHeight();
+      },
 
 
-    /*
-     * AUTOPLAY
-     */
+      move(direction) {
+        if (
+          slides.length < 2
+        ) {
+          return;
+        }
 
-    restart() {
+        this.show(
+          this.index + direction,
+          direction
+        );
 
-      window.clearTimeout(
-        this.timer
-      );
+        this.restart();
+      },
 
-      this.timer =
-        window.setTimeout(
-          () => {
 
+      pause() {
+        this.paused = true;
+
+        clearTimeout(
+          this.timer
+        );
+      },
+
+
+      resume() {
+        this.paused = false;
+
+        this.restart();
+      },
+
+
+      restart() {
+        clearTimeout(
+          this.timer
+        );
+
+        if (
+          reducedMotion() ||
+          this.paused
+        ) {
+          return;
+        }
+
+        this.timer =
+          setTimeout(() => {
             if (
               document.hidden ||
               Date.now() <
                 this.pausedUntil
             ) {
-
               this.restart();
 
               return;
             }
 
             this.move(1);
-
-          },
-          this.interval
-        );
-    },
+          }, this.interval);
+      },
 
 
-    /*
-     * PAUSE
-     */
-
-    pause() {
-
-      window.clearTimeout(
-        this.timer
-      );
-    },
-
-
-    /*
-     * KEYBOARD
-     */
-
-    handleKeydown(event) {
-
-      if (
-        event.key ===
-        'ArrowLeft'
-      ) {
-
-        event.preventDefault();
-
+          userInteraction() {
         this.pausedUntil =
           Date.now() + 4500;
-
-        this.move(-1);
-
-      } else if (
-        event.key ===
-        'ArrowRight'
-      ) {
-
-        event.preventDefault();
-
-        this.pausedUntil =
-          Date.now() + 4500;
-
-        this.move(1);
-
-      } else if (
-        event.key === 'Home'
-      ) {
-
-        event.preventDefault();
-
-        this.pausedUntil =
-          Date.now() + 4500;
-
-        this.show(0);
-
-        this.restart();
-
-      } else if (
-        event.key === 'End'
-      ) {
-
-        event.preventDefault();
-
-        this.pausedUntil =
-          Date.now() + 4500;
-
-        this.show(
-          this.slides.length - 1
-        );
-
-        this.restart();
       }
-    }
-  };
+    };
 
 
-  /*
-   * GLOBAL REFERENCE
-   */
-
-  window.blogSlider =
-    slider;
+    window.blogSlider =
+      slider;
 
 
-  /*
-   * INDICATORS
-   */
+    /* Previous / next */
 
-  indicators.forEach(
-    (dot, index) => {
+    prev?.addEventListener(
+      'click',
+      () => {
+        slider.userInteraction();
+        slider.move(-1);
+      }
+    );
 
-      dot.addEventListener(
-        'click',
-        () => {
+    next?.addEventListener(
+      'click',
+      () => {
+        slider.userInteraction();
+        slider.move(1);
+      }
+    );
 
-          slider.pausedUntil =
-            Date.now() + 4500;
 
-          slider.show(index);
+    /* Indicators */
+
+    indicators.forEach(
+      (dot, i) => {
+        dot.addEventListener(
+          'click',
+          () => {
+            slider.userInteraction();
+
+            const direction =
+              i >= slider.index
+                ? 1
+                : -1;
+
+            slider.show(
+              i,
+              direction
+            );
+
+            slider.restart();
+          }
+        );
+      }
+    );
+
+
+    /* Keyboard */
+
+    carousel.addEventListener(
+      'keydown',
+      event => {
+        if (
+          event.key ===
+          'ArrowLeft'
+        ) {
+          event.preventDefault();
+
+          slider.userInteraction();
+
+          slider.move(-1);
+        }
+
+        if (
+          event.key ===
+          'ArrowRight'
+        ) {
+          event.preventDefault();
+
+          slider.userInteraction();
+
+          slider.move(1);
+        }
+
+        if (
+          event.key ===
+          'Home'
+        ) {
+          event.preventDefault();
+
+          slider.show(0, -1);
+
+          slider.userInteraction();
 
           slider.restart();
         }
-      );
-    }
-  );
 
+        if (
+          event.key ===
+          'End'
+        ) {
+          event.preventDefault();
 
-  /*
-   * KEYBOARD
-   */
+          slider.show(
+            slides.length - 1,
+            1
+          );
 
-  carousel.addEventListener(
-    'keydown',
-    event =>
-      slider.handleKeydown(event)
-  );
+          slider.userInteraction();
 
-
-  /*
-   * MOUSE PAUSE
-   */
-
-  carousel.addEventListener(
-    'mouseenter',
-    () => slider.pause()
-  );
-
-  carousel.addEventListener(
-    'mouseleave',
-    () => slider.restart()
-  );
-
-
-  /*
-   * FOCUS PAUSE
-   */
-
-  carousel.addEventListener(
-    'focusin',
-    () => slider.pause()
-  );
-
-  carousel.addEventListener(
-    'focusout',
-    () => slider.restart()
-  );
-
-
-  /*
-   * TOUCH / SWIPE
-   */
-
-  let touchStartX = 0;
-  let touchStartY = 0;
-
-
-  wrapper.addEventListener(
-    'touchstart',
-    event => {
-
-      const touch =
-        event.changedTouches[0];
-
-      touchStartX =
-        touch.clientX;
-
-      touchStartY =
-        touch.clientY;
-
-    },
-    {
-      passive: true
-    }
-  );
-
-
-  wrapper.addEventListener(
-    'touchend',
-    event => {
-
-      const touch =
-        event.changedTouches[0];
-
-      const dx =
-        touch.clientX -
-        touchStartX;
-
-      const dy =
-        touch.clientY -
-        touchStartY;
-
-
-      if (
-        Math.abs(dx) < 45 ||
-        Math.abs(dx) <
-          Math.abs(dy)
-      ) {
-        return;
+          slider.restart();
+        }
       }
+    );
 
 
-      slider.pausedUntil =
-        Date.now() + 4500;
+    /* Pause while interacting */
+
+    carousel.addEventListener(
+      'mouseenter',
+      () => slider.pause()
+    );
+
+    carousel.addEventListener(
+      'mouseleave',
+      () => slider.resume()
+    );
+
+    carousel.addEventListener(
+      'focusin',
+      () => slider.pause()
+    );
+
+    carousel.addEventListener(
+      'focusout',
+      event => {
+        if (
+          !carousel.contains(
+            event.relatedTarget
+          )
+        ) {
+          slider.resume();
+        }
+      }
+    );
 
 
-      slider.move(
-        dx < 0
-          ? 1
-          : -1
-      );
+    /* Touch / swipe */
 
-    },
-    {
-      passive: true
-    }
-  );
+    wrapper.addEventListener(
+      'touchstart',
+      event => {
+        const touch =
+          event.changedTouches[0];
+
+        slider.touchX =
+          touch.clientX;
+
+        slider.touchY =
+          touch.clientY;
+      },
+      {
+        passive: true
+      }
+    );
+
+    wrapper.addEventListener(
+      'touchend',
+      event => {
+        const touch =
+          event.changedTouches[0];
+
+        const dx =
+          touch.clientX -
+          slider.touchX;
+
+        const dy =
+          touch.clientY -
+          slider.touchY;
+
+        if (
+          Math.abs(dx) < 45 ||
+          Math.abs(dx) <
+            Math.abs(dy)
+        ) {
+          return;
+        }
+
+        slider.userInteraction();
+
+        slider.move(
+          dx < 0
+            ? 1
+            : -1
+        );
+      },
+      {
+        passive: true
+      }
+    );
 
 
-  /*
-   * TAB VISIBILITY
-   */
+    /* Tab visibility */
 
-  document.addEventListener(
-    'visibilitychange',
-    () =>
-      document.hidden
-        ? slider.pause()
-        : slider.restart()
-  );
-
-
-  /*
-   * INITIAL SLIDE
-   */
-
-  slider.show(0);
+    document.addEventListener(
+      'visibilitychange',
+      () => {
+        if (document.hidden) {
+          slider.pause();
+        } else {
+          slider.resume();
+        }
+      }
+    );
 
 
-  /*
-   * REDUCED MOTION
-   */
+    /* Resize */
 
-  if (
-    window.matchMedia &&
-    window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches
-  ) {
+    window.addEventListener(
+      'resize',
+      () => slider.syncHeight(),
+      {
+        passive: true
+      }
+    );
 
-    slider.pause();
 
-  } else {
+    /* Image loading */
+
+    slides.forEach(
+      slide => {
+        slide
+          .querySelectorAll('img')
+          .forEach(img => {
+            if (!img.complete) {
+              img.addEventListener(
+                'load',
+                () =>
+                  slider.syncHeight(),
+                {
+                  once: true
+                }
+              );
+            }
+          });
+      }
+    );
+
+
+    /* Initial state */
+
+    slider.show(0, 1);
 
     slider.restart();
   }
-}
 
 
-/* =========================================================
-   START BLOG SLIDER
-   ========================================================= */
+  /* =========================================================
+     BACKWARD COMPATIBILITY
+     ========================================================= */
 
-if (
-  document.readyState ===
-  'loading'
-) {
+  window.scrollBlog =
+    direction => {
+      if (!window.blogSlider) {
+        return;
+      }
 
-  document.addEventListener(
-    'DOMContentLoaded',
-    initBlogSlider
-  );
+      window.blogSlider
+        .userInteraction();
 
-} else {
+      window.blogSlider
+        .move(direction);
+    };
 
-  initBlogSlider();
 
-}
+  /* =========================================================
+     START
+     ========================================================= */
+
+  if (
+    document.readyState ===
+    'loading'
+  ) {
+    document.addEventListener(
+      'DOMContentLoaded',
+      initBlogSlider
+    );
+  } else {
+    initBlogSlider();
+  }
+
+})();
